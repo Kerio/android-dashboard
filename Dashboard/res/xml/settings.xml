@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android" > 
+	<PreferenceCategory android:title="@string/pref_Operations" >
+		
+		<com.kerio.dashboard.config.gui.ServerConfigDialog
+		   android:title="@string/pref_AddFirewall"
+	       android:summary="@string/pref_AddFirewall_desc"
+	       android:key="button_prefAddFirewall"
+		   />
+			
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/pref_Firewalls"
+        android:key="group_prefFirewallList">
+        
+    </PreferenceCategory>
+    
+</PreferenceScreen>

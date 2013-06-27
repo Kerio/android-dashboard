@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="5dip"
+	android:orientation="vertical"
+	>
+
+    <TextView
+        android:id="@+id/applicationType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pref_ApplicationType" />
+
+    <Spinner
+        android:id="@+id/pref_ApplicationType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:prompt="@string/pref_ApplicationType_desc" />
+
+        <TextView android:text="@string/pref_FirewallHost"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            />
+		<EditText
+		    android:id="@+id/pref_FirewallHost"
+		    android:hint="@string/pref_FirewallHost_desc"
+		    android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:singleLine="true"
+		    />
+		
+        <TextView android:text="@string/pref_FirewallUsername"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"  
+            />
+		<EditText
+		    android:id="@+id/pref_FirewallUsername"    
+		    android:hint="@string/pref_FirewallUsername_desc"
+		    android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:singleLine="true"
+		    />
+		
+		<TextView android:text="@string/pref_FirewallPassword"
+		    android:layout_width="fill_parent" 
+		    android:layout_height="wrap_content" 
+		    />
+		<EditText
+		    android:id="@+id/pref_FirewallPassword"
+		    android:hint="@string/pref_FirewallPassword_desc"
+		    android:inputType="textPassword"
+		    android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:singleLine="true"
+		    />
+		
+		<TextView android:text="@string/pref_FirewallDescription"
+		    android:layout_width="fill_parent" 
+		    android:layout_height="wrap_content" 
+		    />
+		<EditText
+		    android:id="@+id/pref_FirewallDescription"
+		    android:hint="@string/pref_FirewallDescription_desc"
+		    android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:singleLine="true"
+		    />
+		<Button
+		    android:id="@+id/pref_DeleteFirewall_button"
+		    android:text="@string/pref_DeleteFirewallButton"
+		    android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:visibility="gone"
+		    />
+		
+</LinearLayout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Dashboard</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_server">ServerActivity</string>
+    <string name="loadingText">Connecting to server...</string>
+    <string name="pref_Title">Settings</string>
+
+    <string name="pref_Operations">Operations</string>
+    <string name="pref_Firewalls">Servers</string>
+    <string name="pref_AddFirewall">Add Server</string>
+    <string name="pref_AddFirewall_desc">Server to be monitored</string>
+    
+    <string name="pref_FirewallHost">Host</string>
+    <string name="pref_FirewallHost_desc">Hostname or IP address</string>
+    <string name="pref_FirewallUsername">Username</string>
+    <string name="pref_FirewallUsername_desc">Administrator Account</string>
+    <string name="pref_FirewallPassword">Password</string>
+    <string name="pref_FirewallPassword_desc">passhrase, secret etc.</string>
+    <string name="pref_FirewallDescription">Description</string>
+    <string name="pref_FirewallDescription_desc">custom text</string>
+    <string name="pref_DeleteFirewallButton">Delete</string>
+    <string name="pref_ApplicationType">Server Type</string>
+    <string name="pref_ApplicationType_desc">Select a Kerio Server</string>
+    <string-array name="pref_ServerType">
+        <item>Kerio Control</item>
+        <item>Kerio Connect</item>
+        <item>Kerio Operator</item>
+    </string-array>
+    
+    
+</resources>
