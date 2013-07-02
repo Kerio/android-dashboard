@@ -29,6 +29,10 @@
         <item>Kerio Connect</item>
         <item>Kerio Operator</item>
     </string-array>
+    <string name="main_loading">Loading configuration...</string>
+    <string name="main_empty">Server list is empty</string>
+    <string name="note_connecting">Connecting to server...</string>
+    <string name="note_ok">Working properly</string>
     
     
 </resources>

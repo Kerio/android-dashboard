@@ -17,8 +17,6 @@ import android.widget.TextView;
 
 public class ServerTile extends Tile {
 
-	private boolean initialized;
-
 	private LinearLayout holder;
 	
 	private TextView description;
@@ -34,25 +32,17 @@ public class ServerTile extends Tile {
 	public ServerTile(Context context, ServerConfig server) {
 		super(context, (ApiClient)null); // TODO: remove ApiClient
 
-		this.initialized = false;
-
+		initializeStructure();
 		this.setConfig(server);
 	}
 	
 	private void setConfig(ServerConfig config) {
-		if ( ! initialized) { // TODO remove
-			return;
-		}
 		this.type = config.type;
 		this.description.setText((config.description.length() > 0) ? config.description : config.server);
 	}
 		
 	@Override
 	public void setData(Object data) {
-		// TODO remove
-		if ( ! initialized) {
-			initialized = initializeStructure();
-		}
 		
 		if ( ! (data instanceof ServerStatusUpdater.ServerStatus)) {
 			throw new RuntimeException("ServerTile: Unexpected data type");
@@ -69,7 +59,7 @@ public class ServerTile extends Tile {
     	setState(State.Ok);
         
     	if ((status.notifications == null) || status.notifications.isEmpty()) {
-    		hideNotes();
+    		this.notes.setText(R.string.note_ok);
     		return;
     	}
 
@@ -91,11 +81,6 @@ public class ServerTile extends Tile {
 	{
 		this.notes.setText(text);
 		this.notes.setVisibility(View.VISIBLE);
-	}
-	
-	private void hideNotes()
-	{
-		this.notes.setVisibility(View.GONE);
 	}
 	
 	private enum State {
@@ -217,7 +202,7 @@ public class ServerTile extends Tile {
 		this.notes = new TextView(this.getContext());
 		{
 			this.notes.setTextAppearance(this.getContext(), android.R.style.TextAppearance_Small);
-			this.hideNotes(); // Hide notes
+			this.notes.setText(R.string.note_connecting);
 		}
 		holder.addView(this.notes);
 

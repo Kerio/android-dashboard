@@ -13,14 +13,18 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class MainActivity extends Activity {
 
@@ -29,6 +33,7 @@ public class MainActivity extends Activity {
 	private ServerStatusHandler statusHandler = null;
 	private ServerStatusUpdater serverStatusUpdater;
 	private LinearLayout layout = null;
+	private TextView notifyText = null;
 
 	private class ServerStatusHandler extends Handler {
 
@@ -56,7 +61,9 @@ public class MainActivity extends Activity {
 		synchronized private void updateServerList(List<ServerConfig> servers) {
 			@SuppressLint("UseSparseArrays")
 			Map<Integer, ServerTile> newTiles = new HashMap<Integer, ServerTile>(servers.size());
-
+			
+			this.mainActivity.displayText(servers.isEmpty() ? R.string.main_empty : 0);
+			
 			for (ServerConfig server : servers) {
 				Integer id = Integer.valueOf(server.id);
 				ServerTile tile = this.existingTiles.get(id);
@@ -105,6 +112,18 @@ public class MainActivity extends Activity {
     public void removeServerTile(ServerTile tile) {
     	this.layout.removeView(tile);
 	}
+    
+    public void displayText(int resId) {
+    	if (resId == 0) {
+    		this.layout.removeView(this.notifyText);
+    	}
+    	else {
+    		this.notifyText.setText(resId);
+    		if (this.layout.getChildAt(0) != this.notifyText) {
+    			this.layout.addView(this.notifyText, 0);
+    		}
+    	}
+    }
 
     // Display dashboard for selected server
     private void showDashboard(ServerConfig server) {
@@ -125,11 +144,21 @@ public class MainActivity extends Activity {
 		
 		SharedPreferences settings = this.getSharedPreferences(Config.SERVER_CONFIG, Activity.MODE_PRIVATE);
 		
+		this.notifyText = new TextView(this);
+		LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		this.notifyText.setLayoutParams(params);
+		this.notifyText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+		this.notifyText.setTypeface(null, Typeface.ITALIC);
+		
 		this.layout = (LinearLayout)findViewById(R.id.serverList);
+		
+		displayText(R.string.main_loading);
+		
 		this.statusHandler = new ServerStatusHandler(this);
 		
 		this.serverStatusUpdater = new ServerStatusUpdater(this.statusHandler, settings);
 		this.serverStatusUpdater.activate();
+
     }
 
 	@Override
