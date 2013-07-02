@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 
 import com.kerio.dashboard.NotificationUpdater;
+import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.api.NotificationGetter.Notification;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,16 +19,16 @@ import android.widget.TextView;
 
 public class NotificationTile extends Tile {
 	
-	public class NotificationHandler extends Handler {
+	public class NotificationHandler extends TileHandler {
 		private NotificationTile tile;
 		
 		public NotificationHandler(NotificationTile tile) {
+			super(tile);
 			this.tile = tile;
 		}
 
 		@Override
-        public void handleMessage(Message msg) {
-			
+        public void handleMsg(Message msg) {
 			if (msg.obj instanceof HashMap<?, ?>) {
 				this.tile.setData(msg.obj);
 			}

@@ -9,10 +9,10 @@ import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
 import com.kerio.dashboard.SystemHealthUpdater;
 import com.kerio.dashboard.SystemHealthUpdater.HealthData;
 import com.kerio.dashboard.SystemHealthUpdater.HealthData.Summary;
+import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Handler;
 import android.os.Message;
 import android.widget.LinearLayout;
 
@@ -142,16 +142,16 @@ public class SystemHealthTile extends Tile {
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// SystemHealthHandler
 	
-	public class SystemHealthHandler extends Handler {
+	public class SystemHealthHandler extends TileHandler {
 		SystemHealthTile tile;
 		
 		public SystemHealthHandler(SystemHealthTile tile) {
+			super(tile);
 			this.tile = tile;
 		}
 
 		@Override
-        public void handleMessage(Message msg) {
-			
+        public void handleMsg(Message msg) {
 			if (msg.obj instanceof HealthData) {
 				this.tile.setData(msg.obj);
 			}

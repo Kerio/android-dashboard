@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_server">ServerActivity</string>
-    <string name="loadingText">Connecting to server...</string>
+    <string name="loadingText">Loading data...</string>
     <string name="pref_Title">Settings</string>
 
     <string name="pref_Operations">Operations</string>
@@ -33,6 +33,7 @@
     <string name="main_empty">Server list is empty</string>
     <string name="note_connecting">Connecting to server...</string>
     <string name="note_ok">Working properly</string>
+    <string name="connectingText">Connecting to server...</string>
     
     
 </resources>

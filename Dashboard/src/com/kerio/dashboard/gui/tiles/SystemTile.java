@@ -4,9 +4,9 @@ import java.security.InvalidParameterException;
 
 import com.kerio.dashboard.SystemUpdater;
 import com.kerio.dashboard.SystemUpdater.SystemInfo;
+import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
 import android.content.Context;
-import android.os.Handler;
 import android.os.Message;
 
 public class SystemTile extends TextTile {
@@ -14,16 +14,16 @@ public class SystemTile extends TextTile {
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// SystemHandler
 	
-	public class SystemHandler extends Handler {
+	public class SystemHandler extends TileHandler {
 		SystemTile tile;
 		
 		public SystemHandler(SystemTile tile) {
+			super(tile);
 			this.tile = tile;
 		}
 
 		@Override
-        public void handleMessage(Message msg) {
-			
+        public void handleMsg(Message msg) {
 			if (msg.obj instanceof SystemInfo) {
 				this.tile.setData(msg.obj);
 			}

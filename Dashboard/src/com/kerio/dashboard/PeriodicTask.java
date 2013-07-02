@@ -33,7 +33,9 @@ abstract public class PeriodicTask implements Runnable
 		}
 		
 		public void reschedule() {
-			this.handler.postDelayed(this, this.delay);
+			if (this.delay != 0) {
+				this.handler.postDelayed(this, this.delay);
+			}
 		}
 	}
 	

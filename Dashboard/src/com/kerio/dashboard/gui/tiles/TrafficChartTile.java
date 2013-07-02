@@ -5,12 +5,12 @@ import org.json.JSONArray;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
+import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.TrafficChartUpdater;
 import com.kerio.dashboard.TrafficChartUpdater.ChartData;
 import com.kerio.dashboard.api.ApiClient;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Handler;
 import android.os.Message;
 import android.widget.LinearLayout;
 
@@ -71,15 +71,16 @@ public class TrafficChartTile extends Tile {
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// TraffiChartHandler
 	
-	public class TrafficChartHandler extends Handler {
+	public class TrafficChartHandler extends TileHandler {
 		TrafficChartTile tile;
 		
 		public TrafficChartHandler(TrafficChartTile tile) {
+			super(tile);
 			this.tile = tile;
 		}
 
 		@Override
-        public void handleMessage(Message msg) {
+        public void handleMsg(Message msg) {
 			
 			if (msg.obj instanceof ChartData) {
 				this.tile.setData(msg.obj);

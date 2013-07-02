@@ -17,7 +17,7 @@ public class ServerDashboardUpdater extends PeriodicTask {
 	private ApiClient client;
 	
 	public ServerDashboardUpdater(Handler handler, ApiClient client, ServerConfig config) {
-		super(handler);
+		super(handler, 0);
 		this.config = config;
 		this.client = client;
 	}
@@ -41,11 +41,13 @@ public class ServerDashboardUpdater extends PeriodicTask {
 			return;
 		}
 
+		Map<String, Object> tiles = new LinkedHashMap<String, Object>();
+		
 		try {
 			JSONObject d = settings.getJSONObject("settings").getJSONObject("admin").getJSONObject("dashboard");
 			JSONArray columns = d.getJSONArray("columns");
 			
-	 		Map<String, Object> tiles = new LinkedHashMap<String, Object>();
+	 		
 
 			for (int i = 0; i < columns.length(); i++) {
 				JSONArray column = columns.getJSONArray(i);
@@ -54,11 +56,12 @@ public class ServerDashboardUpdater extends PeriodicTask {
 					tiles.put(item.getString("type"), item.optJSONObject("custom"));
 				}
 			}
-			
-			notify("UpdateDone");
-			notify(tiles);
+
 		} catch (JSONException e) {
-			this.notify("Unable to load settings, incorrect format");
+			// TODO add default tiles
 		}
+		
+		notify("UpdateDone");
+		notify(tiles);
 	}
 }

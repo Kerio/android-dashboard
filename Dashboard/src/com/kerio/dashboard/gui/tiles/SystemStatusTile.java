@@ -2,9 +2,9 @@ package com.kerio.dashboard.gui.tiles;
 
 import com.kerio.dashboard.SystemStatusUpdater;
 import com.kerio.dashboard.SystemStatusUpdater.SystemStatus;
+import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
 import android.content.Context;
-import android.os.Handler;
 import android.os.Message;
 
 public class SystemStatusTile extends TextTile {
@@ -12,15 +12,16 @@ public class SystemStatusTile extends TextTile {
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// SystemStatusHandler
 	
-	public class SystemStatusHandler extends Handler {
+	public class SystemStatusHandler extends TileHandler {
 		SystemStatusTile tile;
 		
 		public SystemStatusHandler(SystemStatusTile tile) {
+			super(tile);
 			this.tile = tile;
 		}
 
 		@Override
-        public void handleMessage(Message msg) {
+        public void handleMsg(Message msg) {
 			
 			if (msg.obj instanceof SystemStatus) {
 				this.tile.setData(msg.obj);

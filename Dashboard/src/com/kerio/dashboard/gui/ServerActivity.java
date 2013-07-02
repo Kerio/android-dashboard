@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -48,13 +49,13 @@ public class ServerActivity extends Activity {
 				if (str == "UpdateStarted") {
 					this.activity.onUpdateStarted();
 				} else if (str == "UpdateDone") {
-					this.activity.onUpdateDone();
+					this.activity.setText(getString(R.string.loadingText));
+				} else if (str == "tileUpdated") {
+					this.onUpdateTile();
 				} else {
-					this.activity.onUpdateDone();
-					this.activity.setError(str);
+					this.activity.setText(str);
 				}
 			} else if (msg.obj instanceof Map<?, ?>) {
-				this.activity.onUpdateDone();
 				this.updateTiles((Map<String, JSONObject>)msg.obj);
 			} else {
 				throw new RuntimeException("ServerActivity: unknown object type");
@@ -78,14 +79,18 @@ public class ServerActivity extends Activity {
 			}
 			
 			existingTile = this.tileFactory.create(tileType, tileConfig);
+			
 			if (existingTile != null) {
+				if ( ! existingTile.isReady()) {
+					existingTile.setFinalHandler(dashboardSettingsHandler);
+				}
 				this.activity.addTile(existingTile);
 			}
 			
 			return existingTile;
 		}
 
-		private void updateTiles(Map<String, JSONObject> tiles) {
+		synchronized private void updateTiles(Map<String, JSONObject> tiles) {
 			
 			Map<String, Tile> newTiles = new LinkedHashMap<String, Tile>(tiles.size());
 
@@ -106,13 +111,28 @@ public class ServerActivity extends Activity {
 
 			this.tiles = newTiles;
 		}
+		
+		synchronized private void onUpdateTile() {
+			boolean done = true;
+			for (Map.Entry<String, Tile> entry : this.tiles.entrySet()) {
+				if ( ! entry.getValue().isReady()) {
+					done = false;
+					Log.d("ServerActivity", "Tile not ready: " + entry.getKey());
+					break;
+				}
+			}
+			
+			if (done) {
+				this.activity.onUpdateDone();
+			}
+		}
 	}
 	
 	private ServerDashboardHandler dashboardSettingsHandler;
 	private ServerDashboardUpdater dashboardUpdater;
 	private LinearLayout dashboard;
 	private LinearLayout loading; // initial loading indicator
-	private View notifications; // Notifications tile
+	private NotificationTile notifications; // Notifications tile
 
 	public void onUpdateStarted()
 	{
@@ -122,9 +142,10 @@ public class ServerActivity extends Activity {
 	{
 		this.loading.setVisibility(View.GONE);
 		this.notifications.setVisibility(View.VISIBLE);
+		this.dashboard.setVisibility(View.VISIBLE);
 	}
 
-	public void setError(String error)
+	public void setText(String error)
 	{
 		loadingSetText(error);
 	}
@@ -152,6 +173,7 @@ public class ServerActivity extends Activity {
 		config.description = intent.getStringExtra("desc");
 
     	this.dashboard = (LinearLayout)findViewById(R.id.dashboard);
+    	this.dashboard.setVisibility(View.GONE);
         this.loading = (LinearLayout)findViewById(R.id.loading);
         
         ApiClient apiClient = new ApiClient(config.server);
@@ -159,13 +181,15 @@ public class ServerActivity extends Activity {
         // Notifications tile should present always
         this.notifications = new NotificationTile(this, apiClient);
         this.notifications.setVisibility(View.GONE);
+        
         this.dashboard.addView(this.notifications);
         
 		this.dashboardSettingsHandler = new ServerDashboardHandler(this, apiClient);
+		this.notifications.setFinalHandler(this.dashboardSettingsHandler);
         this.dashboardUpdater = new ServerDashboardUpdater(this.dashboardSettingsHandler, apiClient, config); // TODO: make it autolaunchable
         this.dashboardUpdater.activate();
 
-		loadingSetText(getString(R.string.loadingText));
+		loadingSetText(getString(R.string.connectingText));
 		setTitle(config.description);
 	}
 	
