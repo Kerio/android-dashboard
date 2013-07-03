@@ -59,6 +59,11 @@ public class ServerDashboardUpdater extends PeriodicTask {
 
 		} catch (JSONException e) {
 			// TODO add default tiles
+			tiles.put("tileSystemHealth", null);
+			tiles.put("tileSystem", null);
+			tiles.put("tileSystemStatus", null);
+			tiles.put("tileSystemHealth", null);
+			tiles.put("tileSystemHealth", null);
 		}
 		
 		notify("UpdateDone");

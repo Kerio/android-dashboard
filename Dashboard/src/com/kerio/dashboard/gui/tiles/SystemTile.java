@@ -71,5 +71,15 @@ public class SystemTile extends TextTile {
 		this.data.put("Operating System", si.osDescription);
 		this.update();
 	}
+	
+	@Override
+	public void activate() {
+		 this.systemUpdater.activate();		
+	}
+
+	@Override
+	public void deactivate() {
+		 this.systemUpdater.deactivate();		
+	}
 
 }

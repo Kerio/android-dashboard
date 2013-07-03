@@ -81,5 +81,14 @@ public class SystemStatusTile extends TextTile {
 		
 		this.update();
 	}
+	
+	@Override
+	public void activate() {
+		 this.systemStatusUpdater.activate();		
+	}
 
+	@Override
+	public void deactivate() {
+		 this.systemStatusUpdater.deactivate();		
+	}
 }

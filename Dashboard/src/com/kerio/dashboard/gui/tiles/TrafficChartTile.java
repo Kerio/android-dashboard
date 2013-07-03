@@ -63,6 +63,14 @@ public class TrafficChartTile extends Tile {
 		@Override
 		public void setData(Object data) {
 		}
+		
+		@Override
+		public void activate() {
+		}
+
+		@Override
+		public void deactivate() {
+		}
 	}
 
 	// TrafficGraph
@@ -131,7 +139,15 @@ public class TrafficChartTile extends Tile {
 
 	@Override
 	public void update() {
-		// TODO Remove from parent ?
-		
+	}
+	
+	@Override
+	public void activate() {
+		 this.trafficChartUpdater.activate();		
+	}
+
+	@Override
+	public void deactivate() {
+		 this.trafficChartUpdater.deactivate();		
 	}
 }

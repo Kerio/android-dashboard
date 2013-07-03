@@ -210,5 +210,13 @@ public class ServerTile extends Tile {
 		this.addView(border);
 		return true;
 	}
+	
+	@Override
+	public void activate() {
+	}
+
+	@Override
+	public void deactivate() {
+	}
 
 }

@@ -56,5 +56,7 @@ public abstract class Tile extends LinearLayout {
 
 	public abstract void update();
 	public abstract void setData(Object data);
+	public abstract void activate();
+	public abstract void deactivate();
 	
 }

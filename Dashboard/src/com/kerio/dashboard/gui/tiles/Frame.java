@@ -46,6 +46,16 @@ public class Frame extends Tile {
 		content.setData(data);
 		
 	}
+
+	@Override
+	public void activate() {
+		content.activate();
+	}
+
+	@Override
+	public void deactivate() {
+		content.deactivate();
+	}
 	
 
 }

@@ -167,4 +167,14 @@ public class NotificationTile extends Tile {
 		
 		this.notificationsMap = newNotifications;
 	}
+
+	@Override
+	public void activate() {
+		 this.notificationUpdater.activate();		
+	}
+
+	@Override
+	public void deactivate() {
+		 this.notificationUpdater.deactivate();		
+	}
 }

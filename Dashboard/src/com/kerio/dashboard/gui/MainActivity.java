@@ -158,13 +158,17 @@ public class MainActivity extends Activity {
 		
 		this.serverStatusUpdater = new ServerStatusUpdater(this.statusHandler, settings);
 		this.serverStatusUpdater.activate();
-
     }
-
+	
 	@Override
-	protected void onDestroy() {
+	protected void onResume() {
+		this.serverStatusUpdater.activate();
+		super.onResume();
+	}
+	
+	protected void onPause() {
 		this.serverStatusUpdater.deactivate();
-		super.onDestroy();
+		super.onPause();
 	}
     
 	@Override

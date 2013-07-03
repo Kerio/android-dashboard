@@ -76,7 +76,15 @@ public class SystemHealthTile extends Tile {
 		}
 
 		@Override
-		public void setData(Object data) {
+		public void setData(Object data) {	
+		}
+
+		@Override
+		public void activate() {	
+		}
+
+		@Override
+		public void deactivate() {
 			// TODO Auto-generated method stub
 			
 		}
@@ -134,6 +142,15 @@ public class SystemHealthTile extends Tile {
 			this.memoryUsed = sm.memoryUsed;
 			this.cpuUsage = sm.cpuUsage;
 		}
+
+		@Override
+		public void activate() {
+		}
+
+		@Override
+		public void deactivate() {
+		}
+		
 	}
 
 	// HealthSummary
@@ -206,7 +223,15 @@ public class SystemHealthTile extends Tile {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-		
+	}
+	
+	@Override
+	public void activate() {
+		 this.systemHealthUpdater.activate();		
+	}
+
+	@Override
+	public void deactivate() {
+		 this.systemHealthUpdater.deactivate();		
 	}
 }

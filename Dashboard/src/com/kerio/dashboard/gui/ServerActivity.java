@@ -1,7 +1,9 @@
 package com.kerio.dashboard.gui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -28,6 +30,8 @@ import android.widget.TextView;
 //public class ServerActivity extends Activity implements Runnable {
 public class ServerActivity extends Activity {
 
+	private List<Tile> tiles = null;
+	
 	private class ServerDashboardHandler extends Handler {
 
 		ServerActivity activity;
@@ -151,12 +155,14 @@ public class ServerActivity extends Activity {
 	}
 
 	// Add or remove tile to the dashboard
-	public void addTile(Tile tile) {
+	synchronized public void addTile(Tile tile) {
 		this.dashboard.addView(tile);
+		this.tiles.add(tile);
 	}
 	
-	public void removeTile(Tile tile) {
+	synchronized public void removeTile(Tile tile) {
 		this.dashboard.removeView(tile);
+		this.tiles.remove(tile);
 	}
 
 	@Override
@@ -166,6 +172,7 @@ public class ServerActivity extends Activity {
 
         ServerConfig config = new ServerConfig();
 		Intent intent = getIntent();
+		this.tiles = new ArrayList<Tile>();
 		
 		config.server = intent.getStringExtra("server");
 		config.username = intent.getStringExtra("username");
@@ -187,22 +194,26 @@ public class ServerActivity extends Activity {
 		this.dashboardSettingsHandler = new ServerDashboardHandler(this, apiClient);
 		this.notifications.setFinalHandler(this.dashboardSettingsHandler);
         this.dashboardUpdater = new ServerDashboardUpdater(this.dashboardSettingsHandler, apiClient, config); // TODO: make it autolaunchable
-        this.dashboardUpdater.activate();
-
+       
 		loadingSetText(getString(R.string.connectingText));
 		setTitle(config.description);
 	}
 	
 	@Override
-	protected void onDestroy() {
-		this.dashboardUpdater.deactivate();
-		super.onDestroy();
+	protected void onResume() {
+		for (Tile tile : this.tiles) {
+			tile.activate();
+		}
+		this.dashboardUpdater.activate();
+		super.onResume();
 	}
 	
-	@Override
-	protected void onStop() {
+	protected void onPause() {
+		for (Tile tile : this.tiles) {
+			tile.deactivate();
+		}
 		this.dashboardUpdater.deactivate();
-		super.onStop();
+		super.onPause();
 	}
 
 	@Override
