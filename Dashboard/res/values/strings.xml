@@ -26,8 +26,10 @@
     <string name="pref_ApplicationType_desc">Select a Kerio Server</string>
     <string-array name="pref_ServerType">
         <item>Kerio Control</item>
+        <!-- 
         <item>Kerio Connect</item>
         <item>Kerio Operator</item>
+         -->
     </string-array>
     <string name="main_loading">Loading configuration...</string>
     <string name="main_empty">Server list is empty</string>

@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import com.kerio.dashboard.api.ApiClient;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
@@ -42,7 +43,11 @@ public abstract class TextTile extends Tile {
 			
 			keyView.setText(entry.getKey());
 			keyView.setTypeface(null, Typeface.BOLD);
-			keyView.setPadding(0, 0, 20, 0);
+			if(entry.getKey().equalsIgnoreCase("ram") || entry.getKey().equalsIgnoreCase("cpu") || entry.getKey().equalsIgnoreCase("disk")){
+				keyView.setPadding(0, 0, 20, 0);
+			}else{			
+				keyView.setWidth(145);
+			}
 			valueView.setText(entry.getValue());
 			row.addView(keyView);
 			row.addView(valueView);

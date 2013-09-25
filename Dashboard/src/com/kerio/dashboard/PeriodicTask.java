@@ -7,6 +7,8 @@ import android.util.Log;
 // TODO: Consider using ThreadPoolExecutor or AsyncTask or other standard mechanism
 abstract public class PeriodicTask implements Runnable
 {
+	
+	private static final int DELAY = 20000;
 	private class Helper implements Runnable {
 		private Handler handler;
 		private long delay;
@@ -45,7 +47,7 @@ abstract public class PeriodicTask implements Runnable
 	
 	public PeriodicTask(Handler handler)
 	{
-		this.helper = new Helper(this, handler, 20000);
+		this.helper = new Helper(this, handler, DELAY);
 		this.handler = handler;
 		this.initHandler = handler;
 	}

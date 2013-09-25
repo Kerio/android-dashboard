@@ -53,6 +53,7 @@ public class NotificationTile extends Tile {
 		this.notificationHandler = new NotificationHandler(this);
         this.notificationUpdater = new NotificationUpdater(this.notificationHandler, client); // TODO: make it autolaunchable
         this.notificationUpdater.activate();		
+        this.notificationUpdater.execute();
 	}
 
 	@Override

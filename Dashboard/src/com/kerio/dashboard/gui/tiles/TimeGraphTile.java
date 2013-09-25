@@ -26,7 +26,7 @@ public abstract class TimeGraphTile extends GraphTile {
 		String[] labels = new String[sectionsCount + 1];
 		labels[sectionsCount] = "Now";
 
-		SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
 		long t = timestamp;
 		for (int i = sectionsCount - 1; i >= 0; --i) {
 			t -= this.timeInterval;

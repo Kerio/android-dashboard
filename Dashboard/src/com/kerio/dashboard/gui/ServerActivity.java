@@ -12,6 +12,7 @@ import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerDashboardUpdater;
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.config.ServerConfig;
+import com.kerio.dashboard.config.gui.SettingActivity;
 import com.kerio.dashboard.gui.tiles.NotificationTile;
 import com.kerio.dashboard.gui.tiles.Tile;
 import com.kerio.dashboard.gui.tiles.TileFactory;
@@ -23,6 +24,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 public class ServerActivity extends Activity {
 
 	private List<Tile> tiles = null;
+	private static final int RESULT_SETTINGS = 1;
 	
 	private class ServerDashboardHandler extends Handler {
 
@@ -121,6 +124,7 @@ public class ServerActivity extends Activity {
 			for (Map.Entry<String, Tile> entry : this.tiles.entrySet()) {
 				if ( ! entry.getValue().isReady()) {
 					done = false;
+					System.out.println("Tile not ready: " + entry.getKey()); //DELETEME
 					Log.d("ServerActivity", "Tile not ready: " + entry.getKey());
 					break;
 				}
@@ -140,6 +144,7 @@ public class ServerActivity extends Activity {
 
 	public void onUpdateStarted()
 	{
+		//this.notifications.setVisibility(View.VISIBLE);
 	}
 
 	public void onUpdateDone()
@@ -185,9 +190,9 @@ public class ServerActivity extends Activity {
         
         ApiClient apiClient = new ApiClient(config.server);
 
-        // Notifications tile should present always
+        // Notifications tile should be present always
         this.notifications = new NotificationTile(this, apiClient);
-        this.notifications.setVisibility(View.GONE);
+        this.notifications.setVisibility(View.GONE); //was GONE
         
         this.dashboard.addView(this.notifications);
         
@@ -229,6 +234,19 @@ public class ServerActivity extends Activity {
 			textView.setText(text);
 		}
 	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+        case R.id.action_settings:
+            Intent intent = new Intent(this, SettingActivity.class);
+            startActivityForResult(intent, RESULT_SETTINGS);
+            break;
+        }
+
+        return true;
+    }
 
 //	private void showError(String msg) {
 //		TextView c = new TextView(this);

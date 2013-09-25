@@ -58,7 +58,6 @@ public class TrafficChartUpdater extends TileUpdater {
 				cd.in.put(i, sample.getDouble("inbound"));
 				cd.out.put(i, sample.getDouble("outbound"));
 			}
-			
 			return cd;
 		} catch (JSONException e) {
 		}

@@ -22,7 +22,6 @@ public class NotificationUpdater extends PeriodicTask {
 		if (newNotifications == null) {
 			newNotifications = new HashMap<String, Notification>();
 		}
-		
 		this.notify(newNotifications);
 	}
 

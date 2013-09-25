@@ -26,6 +26,10 @@ public class SystemStatusUpdater extends PeriodicTask {
 	
 	static final String notAvaible = "Not available in the unregistered trial";
 	static final String notAvaibleUpdates = "Working, but no updates available in the unregistred trial";
+	
+	static final String antivirusInternalFailed = "Internal antivirus failed";
+	static final String antivirusExternalFailed = "External antivirus failed";
+	static final String antivirusBothFailed = "Internal and external Antivirus failed";
 
 	private boolean isUnregisteredTrial;
 
@@ -101,7 +105,61 @@ public class SystemStatusUpdater extends PeriodicTask {
 
 	}
 	
-	private String getAntivirusStatus() { return notImplemented; }
+	private String getAntivirusStatus() { 
+		
+		JSONObject queryResult = this.client.exec("Antivirus.get", new JSONObject());
+		if (queryResult == null) {
+			return checkFailed;
+		}
+		
+		String antivirusStatus;
+		
+		try {
+			JSONObject avConfig = queryResult.getJSONObject("config");
+			JSONObject avStatus = avConfig.getJSONObject("antivirus");
+			antivirusStatus = avStatus.getString("status");
+		} catch (JSONException e) {
+			Log.d("SystemStatusTile::getAntivirusStatus()", e.toString());
+			return checkFailed;
+		}
+		
+		if(antivirusStatus.equals("AntivirusNotActive")){
+			return disabled;
+		}
+		
+		if(antivirusStatus.equals("AntivirusInternalFailed")){
+			return antivirusInternalFailed;
+		}
+		
+		if(antivirusStatus.equals("AntivirusExternalFailed")){
+			return antivirusExternalFailed;
+		}
+		
+		if(antivirusStatus.equals("AntivirusBothFailed")){
+			return antivirusBothFailed;
+		}
+		
+		queryResult = this.client.exec("Antivirus.getUpdateStatus", new JSONObject());
+		if (queryResult == null) {
+			return checkFailed;
+		}
+		
+		String avUpdateStatus;
+		try {
+			JSONObject avStatus = queryResult.getJSONObject("status");
+			avUpdateStatus = avStatus.getString("phase");
+		} catch (JSONException e) {
+			Log.d("SystemStatusTile::getAntivirusStatus()", e.toString());
+			return checkFailed;
+		}
+		
+		if(avUpdateStatus.equals("AntivirusUpdateFailed")){
+			return updateFailed;
+		}
+		
+		
+		return working;
+		}
 
 	public String getIpsStatus() {
 		

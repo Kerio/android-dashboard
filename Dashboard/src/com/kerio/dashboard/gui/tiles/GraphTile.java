@@ -28,6 +28,8 @@ public abstract class GraphTile extends Tile {
 		this.graph.getGraphViewStyle().setHorizontalLabelsColor(Color.GRAY);
 		this.graph.getGraphViewStyle().setVerticalLabelsColor(Color.GRAY);
 		
+		this.graph.getGraphViewStyle().setTextSize(12);
+		
 		this.setVerticalLabels(null);
 		this.setHorizontalLabels(null);
 		this.initSeries();
