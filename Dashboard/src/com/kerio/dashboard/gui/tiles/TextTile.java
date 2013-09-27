@@ -46,7 +46,7 @@ public abstract class TextTile extends Tile {
 			if(entry.getKey().equalsIgnoreCase("ram") || entry.getKey().equalsIgnoreCase("cpu") || entry.getKey().equalsIgnoreCase("disk")){
 				keyView.setPadding(0, 0, 20, 0);
 			}else{			
-				keyView.setWidth(145);
+				keyView.setWidth(190);
 			}
 			valueView.setText(entry.getValue());
 			row.addView(keyView);

@@ -29,7 +29,7 @@ public class SystemStatusTile extends TextTile {
 			else if (msg.obj instanceof String) {
 				this.tile.onUpdateError((String)msg.obj);
 			} else {
-				throw new RuntimeException("SystemHealthHandler: unknown object type");
+				throw new RuntimeException("SystemStatusHandler: unknown object type");
 			}
 		}
 	}

@@ -18,7 +18,7 @@ public class TileFactory {
 		
 		if (type.equals("notification")) {
 			return new NotificationTile(context, client);
-		}    	
+		}
 		else if (type.equals("tileSystemHealth")) {
 			return new Frame(context, "System Health", new SystemHealthTile(context, client));
 		}
@@ -27,6 +27,12 @@ public class TileFactory {
 		}
 		else if (type.equals("tileSystemStatus")) {
 			return new Frame(context, "System Status", new SystemStatusTile(context, client));
+		}
+		else if (type.equals("tileVpn")) {
+			return new Frame(context, "VPN Info", new VpnInfoTile(context, client));
+		}
+		else if (type.equals("tileLicense")) {
+			return new Frame(context, "License info", new LicenseTile(context, client));
 		}
 		else if (type.equals("tileTrafficChart")) {
 			String chartId = null;
