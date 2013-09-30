@@ -31,6 +31,9 @@ public class TileFactory {
 		else if (type.equals("tileVpn")) {
 			return new Frame(context, "VPN Info", new VpnInfoTile(context, client));
 		}
+		else if (type.equals("tileConnectivity")) {
+			return new Frame(context, "Connectivity", new ConnectivityTile(context, client));
+		}
 		else if (type.equals("tileLicense")) {
 			return new Frame(context, "License info", new LicenseTile(context, client));
 		}
