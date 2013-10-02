@@ -34,6 +34,9 @@ public class TileFactory {
 		else if (type.equals("tileConnectivity")) {
 			return new Frame(context, "Connectivity", new ConnectivityTile(context, client));
 		}
+		else if (type.equals("tileActiveHosts")) {
+			return new Frame(context, "TopActiveHosts", new TopActiveHostsTile(context, client));
+		}
 		else if (type.equals("tileLicense")) {
 			return new Frame(context, "License info", new LicenseTile(context, client));
 		}

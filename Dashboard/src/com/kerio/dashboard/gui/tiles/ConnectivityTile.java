@@ -66,10 +66,10 @@ public class ConnectivityTile extends TextTile{
 
 		Connectivity con = (Connectivity)data;
 		this.data = new Pairs();
-		this.data.put("Name", "Status     Current Rx/Tx");
+		this.data.put("Name - Status", "Current Rx/Tx");
 		if(con.interfaces != null){
 			for(int i=0;i<con.interfaces.length;i++){
-				this.data.put(con.interfaces[i][0], con.interfaces[i][1]);
+				this.data.put(con.interfaces[i][0]+" - "+con.interfaces[i][1], con.interfaces[i][2]);
 			}
 		}else{
 			this.data.put("No Internet connection found", " ");

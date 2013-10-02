@@ -48,7 +48,7 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 			if(count == 0){
 				con.interfaces = null;
 			}else{	
-				con.interfaces = new String[count][2]; //count = number of tunnels, and second dimension stands for name and link status
+				con.interfaces = new String[count][3]; //count = number of tunnels, and second dimension stands for name and link status
 			
 				int j=0;
 				for(int i=0;i<ifaces.length();i++){
@@ -56,13 +56,14 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 					JSONObject iface = ifaces.getJSONObject(i);
 					if((iface.getString("type").equals("Ethernet")) && (iface.getString("group").equals("Internet"))){
 						con.interfaces[j][0] = iface.getString("name");
-						if(iface.getString("linkStatus").length()==2){
-							status = iface.getString("linkStatus") + "            ";
-						}else{
-							status = iface.getString("linkStatus") + "          ";
-						}
-						status = status + trafficData(iface.getString("id"));
-						con.interfaces[j][1] = status;
+						//if(iface.getString("linkStatus").length()==2){
+							//status = iface.getString("linkStatus") + "            ";
+						//}else{
+							//status = iface.getString("linkStatus") + "          ";
+						//}
+						//status = status + trafficData(iface.getString("id"));
+						con.interfaces[j][1] = iface.getString("linkStatus");
+						con.interfaces[j][2] = trafficData(iface.getString("id"));
 						j++;
 					}
 				}
