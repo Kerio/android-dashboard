@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONObject;
 
@@ -63,7 +64,7 @@ public class ServerActivity extends Activity {
 					this.activity.setText(str);
 				}
 			} else if (msg.obj instanceof Map<?, ?>) {
-				this.updateTiles((Map<String, JSONObject>)msg.obj);
+				this.updateTiles((Map<String, JSONObject>) msg.obj);
 			} else {
 				throw new RuntimeException("ServerActivity: unknown object type");
 			}
@@ -77,8 +78,7 @@ public class ServerActivity extends Activity {
 			return tileType + tileConfig.toString();
 		}
 		
-		private Tile getOrCreateTile(String tileKey, String tileType, JSONObject tileConfig)
-		{
+		private Tile getOrCreateTile(String tileKey, String tileType, JSONObject tileConfig){
 			Tile existingTile = this.tiles.get(tileKey);
 			if (existingTile != null) {
 				this.tiles.remove(tileKey);
@@ -98,13 +98,13 @@ public class ServerActivity extends Activity {
 		}
 
 		synchronized private void updateTiles(Map<String, JSONObject> tiles) {
-			
+
 			Map<String, Tile> newTiles = new LinkedHashMap<String, Tile>(tiles.size());
 
 			for (String tileType : tiles.keySet()) {
-				
+
 				JSONObject tileConfig = tiles.get(tileType);
-				
+
 				String tileKey = this.createKey(tileType, tileConfig);
 				Tile newTile = this.getOrCreateTile(tileKey, tileType, tileConfig);
 				if (newTile != null) {
@@ -124,7 +124,6 @@ public class ServerActivity extends Activity {
 			for (Map.Entry<String, Tile> entry : this.tiles.entrySet()) {
 				if ( ! entry.getValue().isReady()) {
 					done = false;
-					System.out.println("Tile not ready: " + entry.getKey()); //DELETEME
 					Log.d("ServerActivity", "Tile not ready: " + entry.getKey());
 					break;
 				}

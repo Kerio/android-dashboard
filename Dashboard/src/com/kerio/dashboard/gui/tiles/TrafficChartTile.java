@@ -26,8 +26,6 @@ public class TrafficChartTile extends Tile {
 
 		public TrafficGraph(Context context) {
 			super(context, 90, 30 * 60, 5 * 60);
-			//MOJE
-			//this.setVerticalLabels(new String[] {"100%", "75%", "50%", "25%", "0%"});
 		}
 		
 		@Override

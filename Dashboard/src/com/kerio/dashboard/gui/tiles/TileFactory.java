@@ -40,7 +40,7 @@ public class TileFactory {
 		else if (type.equals("tileLicense")) {
 			return new Frame(context, "License info", new LicenseTile(context, client));
 		}
-		else if (type.equals("tileTrafficChart")) {
+		else if (type.startsWith("tileTrafficChart")) { //format is tileTrafficChart+chartId
 			String chartId = null;
 			String chartName = null;
 			Tile result = null;

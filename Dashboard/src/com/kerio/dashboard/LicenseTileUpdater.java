@@ -57,6 +57,11 @@ protected ApiClient client;
 		try{
 			JSONObject webConfig = webFilter.getJSONObject("config");
 			String webFilterStatus = webConfig.getString("status");
+			if(!webConfig.getBoolean("enabled")){
+				licenseInfo.webfilter = "Disabled";
+				return;
+			}
+			
 			licenseInfo.webfilter = "Not activated";
 			if(webFilterStatus.equals("UrlFilterActivated")){
 				licenseInfo.webfilter = "Licensed";
@@ -140,13 +145,43 @@ protected ApiClient client;
 		}
 	}
 	
+	private boolean newVersion(JSONObject object){
+		try{
+			JSONObject productInfo = object.getJSONObject("productInfo");
+			String controlVersion = productInfo.getString("versionString");
+			String temp[] = controlVersion.split(" ");
+			String version = temp[0];
+			version = version.replace('.', ','); //I dont know why but split(".") did not work, so I had to do this replace
+			temp = version.split(",");
+			int i1 = Integer.valueOf(temp[0]);
+			int i2 = Integer.valueOf(temp[1]);
+			
+			if(i1 >= 8 && i2 >=2){ //new API call is applied when version is equal or higher then 8.2.0
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			this.notify("Unable to handle system Information");
+			return true;
+		}
+	}
+	
 	private boolean sendRequests(){
 		JSONObject emptyArguments = new JSONObject();
 		
 		infoResult = this.client.exec("ProductRegistration.getFullStatus", emptyArguments);
 		devices = this.client.exec("ProductInfo.getUsedDevicesCount", emptyArguments);
 		av = this.client.exec("Antivirus.get", emptyArguments);
-		webFilter = this.client.exec("HttpPolicy.getUrlFilterConfig", emptyArguments);
+		
+		JSONObject productInfo = this.client.exec("ProductInfo.get", emptyArguments);
+		if(newVersion(productInfo)){
+			webFilter = this.client.exec("ContentFilter.getUrlFilterConfig", emptyArguments);
+		}else{
+			webFilter = this.client.exec("HttpPolicy.getUrlFilterConfig", emptyArguments);
+		}
+		
 		if ((devices == null) || infoResult == null || av == null || webFilter == null) {
  			this.notify("Unable to update");
 			return false;

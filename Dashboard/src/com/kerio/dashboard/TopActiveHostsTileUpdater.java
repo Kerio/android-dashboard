@@ -98,10 +98,8 @@ public class TopActiveHostsTileUpdater extends PeriodicTask{
 			return number;
 		}
 		
-		System.out.println("vstup: "+number);
 		int decimalPoint = number.indexOf(".");
 		String result = number.substring(0, decimalPoint+3);
-		System.out.println("vystup: "+result);
 		return result;
 			
 	}

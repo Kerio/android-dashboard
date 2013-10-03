@@ -53,7 +53,12 @@ public class ServerDashboardUpdater extends PeriodicTask {
 				JSONArray column = columns.getJSONArray(i);
 				for (int j = 0; j < column.length(); j++) {
 					JSONObject item = column.getJSONObject(j);
-					tiles.put(item.getString("type"), item.optJSONObject("custom"));
+					if(item.getString("type").equals("tileTrafficChart")){
+						JSONObject properties = item.getJSONObject("custom");
+						tiles.put(item.getString("type")+properties.getString("chartId"), item.optJSONObject("custom")); //we need the key of map to be unique
+					}else{
+						tiles.put(item.getString("type"), item.optJSONObject("custom"));
+					}
 				}
 			}
 
