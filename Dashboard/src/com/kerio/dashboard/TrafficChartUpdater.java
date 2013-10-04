@@ -74,6 +74,10 @@ public class TrafficChartUpdater extends TileUpdater {
 				cd.out.put(i, sample.getDouble("outbound"));
 			}
 			
+			for(int i=(cd.in.length());i<92;i++){ //charts are displaying 92 values. If there is not values, complete it with zeros, so the chart is not deformed
+				cd.in.put(i, 0);
+				cd.out.put(i, 0);
+			}
 			return cd;
 		} catch (JSONException e) {
 		}

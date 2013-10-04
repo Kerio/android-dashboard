@@ -66,11 +66,17 @@ public class SystemHealthUpdater extends TileUpdater {
 			if (memoryValues.length() > 0) {
 				health.summary.memoryUsed = Double.valueOf(health.summary.memoryTotal * memoryValues.getDouble(0) / 100).longValue();
 			}
+			for(int i=(memoryValues.length()-1);i<92;i++){ //graph shows 92 values, if there is not enough data, add 0
+				memoryValues.put(i, 0);
+			}
 			health.memoryLoad = this.jsonArrayToArray(memoryValues);
 			
 			JSONArray cpuValues = data.getJSONArray("cpu");
 			if (cpuValues.length() > 0) {
 				health.summary.cpuUsage = cpuValues.getDouble(0);
+			}
+			for(int i=(cpuValues.length()-1);i<92;i++){ //graph shows 92 values, if there is not enough data, add 0
+				cpuValues.put(i, 0);
 			}
 			health.cpuLoad = this.jsonArrayToArray(cpuValues);
 
