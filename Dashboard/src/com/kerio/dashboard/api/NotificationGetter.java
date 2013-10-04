@@ -104,9 +104,8 @@ public class NotificationGetter {
 				
 				String type = notificationInfo.getString("type");
 				String value = notificationInfo.getString("value");
-				long code = notificationInfo.getLong("code");
 				
-				Notification notification = this.createNotification(type, value, code);
+				Notification notification = this.createNotification(type, value);
 				
 				result.put(key, notification);
 			}
@@ -117,7 +116,7 @@ public class NotificationGetter {
 		return result;
 	}
 	
-	private Notification createNotification(String type, String value, long code) {
+	private Notification createNotification(String type, String value) {
 		if ( ! this.knownNotifications.containsKey(type)) {
 			return null;
 		}
