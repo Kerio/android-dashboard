@@ -56,12 +56,6 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 					JSONObject iface = ifaces.getJSONObject(i);
 					if((iface.getString("type").equals("Ethernet")) && (iface.getString("group").equals("Internet"))){
 						con.interfaces[j][0] = iface.getString("name");
-						//if(iface.getString("linkStatus").length()==2){
-							//status = iface.getString("linkStatus") + "            ";
-						//}else{
-							//status = iface.getString("linkStatus") + "          ";
-						//}
-						//status = status + trafficData(iface.getString("id"));
 						con.interfaces[j][1] = iface.getString("linkStatus");
 						con.interfaces[j][2] = trafficData(iface.getString("id"));
 						j++;
@@ -85,14 +79,12 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 			traffic.put("id", "0"+id);
 		}catch(JSONException e){
 			this.notify("Unable to make JSONObject for traffic data");
-			System.out.println("Unable to make JSONObject for traffic data"+e.toString());
 		}
 		
 		JSONObject trafficData = this.client.exec("TrafficStatistics.getHistogram", traffic);
 		
 		if(trafficData == null){
 			this.notify("Unable to get traffic data");
-			System.out.println("Unable to get traffic data");
 			return "";
 		}else{
 			try{

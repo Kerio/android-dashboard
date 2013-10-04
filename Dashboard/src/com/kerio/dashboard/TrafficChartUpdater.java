@@ -13,6 +13,7 @@ public class TrafficChartUpdater extends TileUpdater {
 		public long sampleTime;
 		public JSONArray in;
 		public JSONArray out;
+		public String unit;
 	};
 	
 	String chartId;
@@ -49,6 +50,20 @@ public class TrafficChartUpdater extends TileUpdater {
 			}
 
 			ChartData cd = new ChartData();
+			
+			if(hist.getString("units").equals("Bytes")){
+				cd.unit = "B/s";
+			}else if(hist.getString("units").equals("KiloBytes")){
+				cd.unit = "KB/s";
+			}else if(hist.getString("units").equals("MegaBytes")){
+				cd.unit = "MB/s";
+			}else if(hist.getString("units").equals("GigaBytes")){
+				cd.unit = "GB/s";
+			}else{
+				cd.unit = "Unknown";
+			}
+			
+			
 			cd.sampleTime  = response.getLong("sampleTime");
 			cd.in = new JSONArray();
 			cd.out = new JSONArray();
@@ -58,6 +73,7 @@ public class TrafficChartUpdater extends TileUpdater {
 				cd.in.put(i, sample.getDouble("inbound"));
 				cd.out.put(i, sample.getDouble("outbound"));
 			}
+			
 			return cd;
 		} catch (JSONException e) {
 		}

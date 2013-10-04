@@ -1,11 +1,13 @@
 package com.kerio.dashboard.gui.tiles;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.kerio.dashboard.api.ApiClient;
 
 import android.content.Context;
+import android.util.Log;
 
 public class TileFactory {
 
@@ -35,7 +37,7 @@ public class TileFactory {
 			return new Frame(context, "Connectivity", new ConnectivityTile(context, client));
 		}
 		else if (type.equals("tileActiveHosts")) {
-			return new Frame(context, "TopActiveHosts", new TopActiveHostsTile(context, client));
+			return new Frame(context, "Top Active Hosts", new TopActiveHostsTile(context, client));
 		}
 		else if (type.equals("tileLicense")) {
 			return new Frame(context, "License info", new LicenseTile(context, client));
@@ -49,6 +51,7 @@ public class TileFactory {
 				chartName = data.getString("chartName");
 				result = new Frame(context, chartName, new TrafficChartTile(context, client, chartId));
 			} catch (JSONException e) {
+				e.printStackTrace();
 			}
 			
 			return result;

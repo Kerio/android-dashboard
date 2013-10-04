@@ -33,6 +33,56 @@ public class TrafficChartTile extends Tile {
 			throw new UnsupportedOperationException();
 		}
 		
+		public void setLabels(JSONArray in, JSONArray out, String unit){
+			double bin = biggestNumber(in);
+			double bout = biggestNumber(out);
+			if(bin > bout){
+				this.setVerticalLabels(makeLabels(bin, unit));
+			}else{
+				this.setVerticalLabels(makeLabels(bout, unit));
+			}
+			this.updateLabels();
+		}
+		
+		private String[] makeLabels(double num, String unit){
+			String[] result = new String[5];
+			double step = num / (double)4;
+			
+			result[0] = formatNumber(String.valueOf(num))+" "+unit;
+			result[1] = formatNumber(String.valueOf(num - step))+" "+unit;
+			result[2] = formatNumber(String.valueOf(num - (2*step)))+" "+unit;
+			result[3] = formatNumber(String.valueOf(num - (3*step)))+" "+unit;
+			result[4] = "0"+" "+unit;
+			
+			return result;
+		}
+		
+		private String formatNumber(String number){
+			if(!number.contains(".")){
+				return number;
+			}
+			
+			int decimalPoint = number.indexOf(".");
+			String result = number.substring(0, decimalPoint);
+			return result;
+				
+		}
+		
+		private double biggestNumber(JSONArray array){
+			double num = 0;
+			try{
+				for(int i=0;i<92;i++){ // 92 is number of values which are displayed in graph
+					if(array.getDouble(i) > num){
+						num = array.getDouble(i);
+					}
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+				return 0;
+			}
+			return num;
+		}
+		
 		@Override
 		protected void initSeries()
 		{
@@ -135,6 +185,7 @@ public class TrafficChartTile extends Tile {
 		
 		ChartData cd = (ChartData)data;
 		this.graph.setValues(cd.in, cd.out, cd.sampleTime);
+		this.graph.setLabels(cd.in, cd.out, cd.unit);
 		this.graph.update();
 	}
 

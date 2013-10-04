@@ -99,7 +99,7 @@ public class TopActiveHostsTileUpdater extends PeriodicTask{
 		}
 		
 		int decimalPoint = number.indexOf(".");
-		String result = number.substring(0, decimalPoint+3);
+		String result = number.substring(0, decimalPoint+2);
 		return result;
 			
 	}

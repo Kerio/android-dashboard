@@ -201,13 +201,42 @@ public class SystemStatusUpdater extends PeriodicTask {
 		return working;
 	}
 	
+	private boolean newVersion(JSONObject object){
+		try{
+			JSONObject productInfo = object.getJSONObject("productInfo");
+			String controlVersion = productInfo.getString("versionString");
+			String temp[] = controlVersion.split(" ");
+			String version = temp[0];
+			version = version.replace('.', ','); //I dont know why but split(".") did not work, so I had to do this replace
+			temp = version.split(",");
+			int i1 = Integer.valueOf(temp[0]);
+			int i2 = Integer.valueOf(temp[1]);
+			
+			if(i1 >= 8 && i2 >=2){ //new API call is applied when version is equal or higher then 8.2.0
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			this.notify("Unable to handle system Information");
+			return true;
+		}
+	}
+	
 	private String getWebFilterStatus() {
 		
 		if (this.isUnregisteredTrial) {
 			return notAvaible;
 		}
 		
-		JSONObject queryResult = this.client.exec("HttpPolicy.getUrlFilterConfig", new JSONObject());
+		JSONObject productInfo = this.client.exec("ProductInfo.get", new JSONObject());
+		JSONObject queryResult;
+		if(newVersion(productInfo)){
+			queryResult = this.client.exec("ContentFilter.getUrlFilterConfig", new JSONObject());
+		}else{
+			queryResult = this.client.exec("HttpPolicy.getUrlFilterConfig", new JSONObject());
+		}
 		
 		if (queryResult == null) {
 			return checkFailed;
