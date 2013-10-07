@@ -128,8 +128,6 @@ public class VpnInfoTileUpdater extends PeriodicTask{
 			this.notify("Unable to make JSONObject for active vpn hosts");
 		}
 		
-		
-		
 		activeHosts = this.client.exec("ActiveHosts.get", activeHostsArguments);
 		vpnInterfaces = this.client.exec("Interfaces.get", interfacesArguments);
 		if ((activeHosts == null) || vpnInterfaces == null) {

@@ -66,18 +66,39 @@ public class SystemHealthUpdater extends TileUpdater {
 			if (memoryValues.length() > 0) {
 				health.summary.memoryUsed = Double.valueOf(health.summary.memoryTotal * memoryValues.getDouble(0) / 100).longValue();
 			}
-			for(int i=(memoryValues.length()-1);i<92;i++){ //graph shows 92 values, if there is not enough data, add 0
-				memoryValues.put(i, 0);
+			
+			if(memoryValues.length() < 92){  //graph shows 92 values, if there is not enough data, add 0
+				for(int i=(memoryValues.length()-1);i<92;i++){ 
+					memoryValues.put(i, 0);
+				}
+			}else{// if there is more then 92 values, strip the data so gui is not so loaded with computing
+				JSONArray temp = new JSONArray();
+				for(int i=0;i<92;i++){
+					temp.put(i, memoryValues.getDouble(i));
+				}
+				memoryValues = temp;
 			}
+			
+			
 			health.memoryLoad = this.jsonArrayToArray(memoryValues);
 			
 			JSONArray cpuValues = data.getJSONArray("cpu");
 			if (cpuValues.length() > 0) {
 				health.summary.cpuUsage = cpuValues.getDouble(0);
 			}
-			for(int i=(cpuValues.length()-1);i<92;i++){ //graph shows 92 values, if there is not enough data, add 0
-				cpuValues.put(i, 0);
+			
+			if(cpuValues.length() < 92){ //graph shows 92 values, if there is not enough data, add 0
+				for(int i=(cpuValues.length()-1);i<92;i++){
+					cpuValues.put(i, 0);
+				}
+			}else{ // if there is more then 92 values, strip the data so gui is not so loaded with computing
+				JSONArray temp = new JSONArray();
+				for(int i=0;i<92;i++){
+					temp.put(i, cpuValues.getDouble(i));
+				}
+				cpuValues = temp;
 			}
+			
 			health.cpuLoad = this.jsonArrayToArray(cpuValues);
 
 			return health;

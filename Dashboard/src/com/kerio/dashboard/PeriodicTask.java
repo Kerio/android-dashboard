@@ -9,7 +9,7 @@ abstract public class PeriodicTask implements Runnable
 {
 	
 	private static final int DELAY = 20000;
-	private class Helper implements Runnable {
+	private class Helper implements Runnable{
 		private Handler handler;
 		private long delay;
 		private Runnable job;
@@ -23,15 +23,26 @@ abstract public class PeriodicTask implements Runnable
 		
 		@Override
 		public void run() {
-			Thread thread = new Thread(this.job);
-			thread.start();
+			handler.post(new Runnable(){
+				public void run(){
+					try{
+						Thread thread = new Thread(job);
+						thread.start();
+						//thread.join();
+					}catch(Exception e){
+						System.out.println(e.toString());
+					}
+				}
+			});
+			//Thread thread = new Thread(this.job);
+			//thread.start();
 
 			// TODO: Remove when multithreadded HTTP problem will be solved 
-			try {
-				thread.join();
-			}
-			catch (Exception e)
-			{}
+			//try {
+				//thread.join();
+			//}
+			//catch (Exception e)
+			//{}
 		}
 		
 		public void reschedule() {

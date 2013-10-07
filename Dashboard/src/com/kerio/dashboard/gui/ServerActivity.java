@@ -143,7 +143,6 @@ public class ServerActivity extends Activity {
 
 	public void onUpdateStarted()
 	{
-		//this.notifications.setVisibility(View.VISIBLE);
 	}
 
 	public void onUpdateDone()
