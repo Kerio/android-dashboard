@@ -28,7 +28,7 @@ public abstract class TileUpdater extends PeriodicTask {
  			this.notify("Unable to prepare request");
 			return;
 		}
-			
+
 		JSONObject ret = this.client.exec(this.method, arguments);
 		if (ret == null) {
  			this.notify("Unable to update");

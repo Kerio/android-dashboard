@@ -19,39 +19,46 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
 
-public class ApiClient {
+public class ApiClient{
 	public ApiClient(String server) {
 		this.server = server;
 		this.port = 0;
 		
-		HttpParams httpParameters = new BasicHttpParams();
-		// Set the timeout in milliseconds until a connection is established.
-		// The default value is zero, that means the timeout is not used. 
-		int timeoutConnection = 10000;
-		HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
-		// Set the default socket timeout (SO_TIMEOUT) 
-		// in milliseconds which is the timeout for waiting for data.
-		int timeoutSocket = 10000;
-		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+		HttpParams params = new BasicHttpParams();
+	    params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+	    params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, HTTP.DEFAULT_CONTENT_CHARSET);
+	    params.setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, true);
+	    params.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 30 * 1000);
+	    params.setParameter(CoreConnectionPNames.SO_TIMEOUT, 30 * 1000);
+	    
+	    SchemeRegistry schReg = new SchemeRegistry();
+	    schReg.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+	    schReg.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+	    ClientConnectionManager conMgr = new ThreadSafeClientConnManager(params, schReg);
 
-		httpClient = sslClient(new DefaultHttpClient(httpParameters));
+	    httpClient = sslClient(new DefaultHttpClient(conMgr, params));
 	}
 	
 	public ApiClient(String server, int port) {
