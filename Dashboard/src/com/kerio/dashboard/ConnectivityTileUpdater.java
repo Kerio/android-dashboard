@@ -69,8 +69,8 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 	}
 	
 	private String trafficData(String id){
-		int in = 0;
-		int out = 0;
+		double in = 0;
+		double out = 0;
 		String unit = "";
 		
 		JSONObject traffic = new JSONObject();
@@ -92,8 +92,8 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 				JSONArray data = hist.getJSONArray("data");
 				
 				JSONObject recentTraffic = data.getJSONObject(0);
-				in = recentTraffic.getInt("inbound");
-				out = recentTraffic.getInt("outbound");
+				in = recentTraffic.getDouble("inbound");
+				out = recentTraffic.getDouble("outbound");
 				
 				
 				if(hist.getString("units").equals("Bytes")){
