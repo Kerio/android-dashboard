@@ -90,21 +90,29 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 			try{
 				JSONObject hist = trafficData.getJSONObject("hist");
 				JSONArray data = hist.getJSONArray("data");
+				
+				JSONObject recentTraffic = data.getJSONObject(0);
+				in = recentTraffic.getInt("inbound");
+				out = recentTraffic.getInt("outbound");
+				
+				
 				if(hist.getString("units").equals("Bytes")){
 					unit = "B/s";
 				}else if(hist.getString("units").equals("KiloBytes")){
 					unit = "KB/s";
 				}else if(hist.getString("units").equals("MegaBytes")){
-					unit = "MB/s";
+					if(in > 10){
+						unit = "MB/s";
+					}else{//Until the speed is more then 10MB/s I want to show it in KB/s
+						unit = "KB/s";
+						in = in*1024;
+						out = out*1024;
+					}
 				}else if(hist.getString("units").equals("GigaBytes")){
 					unit = "GB/s";
 				}else{
 					unit = "Unknown";
 				}
-				
-				JSONObject recentTraffic = data.getJSONObject(0);
-				in = recentTraffic.getInt("inbound");
-				out = recentTraffic.getInt("outbound");
 				
 				
 			}catch(JSONException e){
