@@ -8,12 +8,14 @@ import com.kerio.dashboard.config.ServerConfig;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class ServerTile extends Tile {
 
@@ -93,21 +95,25 @@ public class ServerTile extends Tile {
 			this.icon.setImageResource(android.R.drawable.presence_online);
 			this.icon.setVisibility(View.VISIBLE);
 			this.progress.setVisibility(View.GONE);
+			this.border.setBackgroundColor(0xFF97cc00);
 			break;
 		case Error:
 			this.icon.setImageResource(android.R.drawable.presence_busy);
 			this.icon.setVisibility(View.VISIBLE);
 			this.progress.setVisibility(View.GONE);
+			this.border.setBackgroundColor(0xFFfa3431);
 			break;
 		case Warning:
 			this.icon.setImageResource(android.R.drawable.stat_sys_warning);
 			this.icon.setVisibility(View.VISIBLE);
 			this.progress.setVisibility(View.GONE);
+			this.border.setBackgroundColor(Color.LTGRAY);
 			break;
 		case Unknown:
 		default:
 			this.progress.setVisibility(View.VISIBLE);
 			this.icon.setVisibility(View.GONE);
+			this.border.setBackgroundColor(Color.LTGRAY);
 			break;
 		}
 	}
@@ -117,12 +123,16 @@ public class ServerTile extends Tile {
 	{
 		border = new LinearLayout(this.getContext());
 		border.setBackgroundColor(Color.LTGRAY);
-		border.setPadding(0, 0, 0, 1);
+		border.setPadding(3, 0, 0, 0);
+		
+		LayoutParams borderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		borderParams.bottomMargin = 15;
+		border.setLayoutParams(borderParams);
 		
 		// Create main frame
 		frame = new LinearLayout(this.getContext());
 		LayoutParams frameParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		frameParams.height = 120;
+		frameParams.height = 90;
 		frame.setLayoutParams(frameParams);
 		frame.setOrientation(LinearLayout.HORIZONTAL);
 		
@@ -139,18 +149,20 @@ public class ServerTile extends Tile {
 				appIcon.setImageResource(R.drawable.ico_control);
 				break;
 		}
-		
-		appIcon.setPadding(0, 1, 5, 1);
+
+		LayoutParams appIconParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+		appIconParams.gravity = Gravity.CENTER_VERTICAL;
+		appIcon.setLayoutParams(appIconParams);
+		appIcon.setPadding(10, 0, 10, 0);
 		frame.addView(appIcon);
 		
 		border.addView(frame);
 		
 		// Create vertical layout		
 		holder = new LinearLayout(this.getContext());
-		{
-//			holder.setBackgroundColor(Color.);
-			
+		{	
 			LayoutParams llParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			llParams.gravity = Gravity.CENTER_VERTICAL;
 			holder.setLayoutParams(llParams);
 			holder.setOrientation(LinearLayout.VERTICAL);
 			frame.setBackgroundColor(Color.WHITE);
@@ -176,7 +188,7 @@ public class ServerTile extends Tile {
 				RelativeLayout.LayoutParams progressParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 				progressParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 				progressParams.addRule(RelativeLayout.CENTER_VERTICAL);
-				progressParams.height = 22;
+				progressParams.height = 20;
 				progressParams.width = 22;
 				progressParams.rightMargin = 3;
 				
@@ -189,9 +201,10 @@ public class ServerTile extends Tile {
 				
 				RelativeLayout.LayoutParams iconParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 				iconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-				iconParams.addRule(RelativeLayout.CENTER_VERTICAL);
+				iconParams.addRule(RelativeLayout.ALIGN_BASELINE);
 				
 				this.icon.setLayoutParams(iconParams);
+				this.icon.setPadding(10, 10, 10, 10);
 				this.setState(State.Unknown); // Hide icon
 			}
 			rl.addView(this.icon);
