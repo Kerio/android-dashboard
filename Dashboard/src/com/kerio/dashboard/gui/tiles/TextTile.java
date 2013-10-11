@@ -9,9 +9,11 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public abstract class TextTile extends Tile {
 
@@ -36,20 +38,25 @@ public abstract class TextTile extends Tile {
 		
 		for (Pairs.Entry<String, String> entry : pairs.entrySet()) {
 			TableRow row = new TableRow(this.getContext());
-			row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+			
+			TableLayout.LayoutParams  rowParams = new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			rowParams.setMargins(0,1,0,1);
+			row.setLayoutParams(rowParams);
 			
 			TextView keyView = new TextView(this.getContext());
-			TextView valueView = new TextView(this.getContext());
-			
 			keyView.setText(entry.getKey());
 			keyView.setTypeface(null, Typeface.BOLD);
 			if(entry.getKey().equalsIgnoreCase("ram") || entry.getKey().equalsIgnoreCase("cpu") || entry.getKey().equalsIgnoreCase("disk")){
-				keyView.setPadding(0, 0, 20, 0);
+				keyView.setPadding(10, 0, 20, 0);
 			}else{			
 				keyView.setWidth(190);
+				keyView.setPadding(10, 0, 0, 0);
 			}
-			valueView.setText(entry.getValue());
+
 			row.addView(keyView);
+
+			TextView valueView = new TextView(this.getContext());
+			valueView.setText(entry.getValue());
 			row.addView(valueView);
 			
 			keyView.setVisibility(View.VISIBLE);

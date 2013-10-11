@@ -9,6 +9,7 @@
     android:scrollbarAlwaysDrawVerticalTrack="true"
     android:scrollbarStyle="insideInset"
     android:scrollbars="horizontal|vertical"
+    android:background="#f5f5f5"
     tools:context=".ServerActivity" >
 
     <ScrollView

@@ -199,7 +199,12 @@ public class ServerActivity extends Activity {
         this.dashboardUpdater = new ServerDashboardUpdater(this.dashboardSettingsHandler, apiClient, config); // TODO: make it autolaunchable
        
 		loadingSetText(getString(R.string.connectingText));
-		setTitle(config.description);
+		if (0 != config.description.length()) {
+			setTitle(config.description);
+		}
+		else {
+			setTitle(config.server);
+		}
 	}
 	
 	@Override
