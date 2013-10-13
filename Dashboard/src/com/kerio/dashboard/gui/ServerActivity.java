@@ -213,8 +213,17 @@ public class ServerActivity extends Activity {
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	protected void setUpActionBar() {
+		// Make sure if the NavUtils are available (from Android-support api)
+		boolean NavUtilsIsAvailable = true;
+		try {
+			Class.forName("android.support.v4.app.NavUtils");
+		}
+		catch (ClassNotFoundException e) {
+			NavUtilsIsAvailable = false;
+		}
+		
 	    // Make sure we're running on Honeycomb or higher to use ActionBar APIs
-	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && NavUtilsIsAvailable) {
 	        getActionBar().setDisplayHomeAsUpEnabled(true);
 	    }
 	}
@@ -259,7 +268,13 @@ public class ServerActivity extends Activity {
             startActivityForResult(intent, RESULT_SETTINGS);
             break;
         case android.R.id.home:
-            NavUtils.navigateUpFromSameTask(this);
+        	try {
+        		NavUtils.navigateUpFromSameTask(this);
+        	}
+        	catch (NoClassDefFoundError e) {
+        		/* NavUtils class hasn't been found */
+        	}
+            
             return true;
         }
         return super.onOptionsItemSelected(item);
