@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.json.JSONObject;
 
@@ -18,11 +17,14 @@ import com.kerio.dashboard.gui.tiles.NotificationTile;
 import com.kerio.dashboard.gui.tiles.Tile;
 import com.kerio.dashboard.gui.tiles.TileFactory;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -205,6 +207,16 @@ public class ServerActivity extends Activity {
 		else {
 			setTitle(config.server);
 		}
+		
+		setUpActionBar();
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	protected void setUpActionBar() {
+	    // Make sure we're running on Honeycomb or higher to use ActionBar APIs
+	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+	        getActionBar().setDisplayHomeAsUpEnabled(true);
+	    }
 	}
 	
 	@Override
@@ -246,9 +258,11 @@ public class ServerActivity extends Activity {
             Intent intent = new Intent(this, SettingActivity.class);
             startActivityForResult(intent, RESULT_SETTINGS);
             break;
+        case android.R.id.home:
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
         }
-
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
 //	private void showError(String msg) {
