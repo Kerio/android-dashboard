@@ -52,7 +52,6 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 			
 				int j=0;
 				for(int i=0;i<ifaces.length();i++){
-					String status = "";
 					JSONObject iface = ifaces.getJSONObject(i);
 					if((iface.getString("type").equals("Ethernet")) && (iface.getString("group").equals("Internet"))){
 						con.interfaces[j][0] = iface.getString("name");

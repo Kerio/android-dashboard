@@ -2,6 +2,7 @@ package com.kerio.dashboard;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -170,16 +171,36 @@ protected ApiClient client;
 	
 	private boolean sendRequests(){
 		JSONObject emptyArguments = new JSONObject();
-		
-		infoResult = this.client.exec("ProductRegistration.getFullStatus", emptyArguments);
-		devices = this.client.exec("ProductInfo.getUsedDevicesCount", emptyArguments);
-		av = this.client.exec("Antivirus.get", emptyArguments);
+		LinkedHashMap<String, JSONObject> requests = new LinkedHashMap<String, JSONObject>();
+		LinkedHashMap<String, JSONObject> response;
 		
 		JSONObject productInfo = this.client.exec("ProductInfo.get", emptyArguments);
+		
+		requests.put("ProductRegistration.getFullStatus", emptyArguments);
+		requests.put("ProductInfo.getUsedDevicesCount", emptyArguments);
+		requests.put("Antivirus.get", emptyArguments);
 		if(newVersion(productInfo)){
-			webFilter = this.client.exec("ContentFilter.getUrlFilterConfig", emptyArguments);
+			requests.put("ContentFilter.getUrlFilterConfig", emptyArguments);
 		}else{
-			webFilter = this.client.exec("HttpPolicy.getUrlFilterConfig", emptyArguments);
+			requests.put("HttpPolicy.getUrlFilterConfig", emptyArguments);
+		}
+		
+		requests.put("Antivirus.getUpdateStatus", new JSONObject());
+		requests.put("IntrusionPrevention.get", new JSONObject());
+		requests.put("IntrusionPrevention.getUpdateStatus", new JSONObject());
+		requests.put("ProductInfo.get", new JSONObject());
+		
+		response = this.client.execBatch(requests);
+		
+		
+		infoResult = response.get("ProductRegistration.getFullStatus");
+		devices = response.get("ProductInfo.getUsedDevicesCount");
+		av = response.get("Antivirus.get");
+		
+		if(newVersion(productInfo)){
+			webFilter = response.get("ContentFilter.getUrlFilterConfig");
+		}else{
+			webFilter = response.get("HttpPolicy.getUrlFilterConfig");
 		}
 		
 		if ((devices == null) || infoResult == null || av == null || webFilter == null) {

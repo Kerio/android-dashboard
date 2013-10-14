@@ -44,10 +44,6 @@ import org.json.JSONObject;
 import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
 
 import android.util.Log;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 public class ApiClient{
 	LinkedHashMap<String, JSONObject> response = null;
@@ -128,6 +124,7 @@ public class ApiClient{
 			if (token != null) {
 				httpPost.setHeader("X-Token", token);
 			}
+			Log.d("ApiClient Request", "exec - " + method);
 			HttpResponse resp = httpClient.execute(httpPost);
 			
 			StatusLine status = resp.getStatusLine();
@@ -187,6 +184,7 @@ public class ApiClient{
 			if (this.token != null) {
 				httpPost.setHeader("X-Token", this.token);
 			}
+			Log.d("ApiClient Request", "execBatch - batch size " + Integer.toString(requests.size()));
 			HttpResponse resp = this.httpClient.execute(httpPost);
 			
 			//handle response
