@@ -5,6 +5,7 @@ import com.kerio.dashboard.SystemStatusUpdater.SystemStatus;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
 import android.content.Context;
+import android.os.Handler;
 import android.os.Message;
 
 public class SystemStatusTile extends TextTile {
@@ -41,6 +42,8 @@ public class SystemStatusTile extends TextTile {
 	private Pairs data;
 	private SystemStatusHandler systemStatusHandler;
 	private SystemStatusUpdater systemStatusUpdater;
+	private Handler updateHandler = new Handler();
+	private Integer uptimeRaw = null;
 
 	
 	public SystemStatusTile(Context context, ApiClient client) {
@@ -64,10 +67,13 @@ public class SystemStatusTile extends TextTile {
 		if ( ! (data instanceof SystemStatus)) {
 			throw new RuntimeException("SystemStatusTile: Unexpected data type");
 		}
+		updateHandler.removeCallbacks(updateTimer);
 		
 		SystemStatus ss = (SystemStatus)data;
 		
 		this.data = new Pairs();
+		
+		this.uptimeRaw = ss.uptimeRaw; 
 
 		// why are these damn values computed on the client?
 		this.data.put("Uptime", ss.uptime);
@@ -80,7 +86,18 @@ public class SystemStatusTile extends TextTile {
 		this.data.put("Kerio VPN Server", ss.kvpn);
 		
 		this.update();
+		updateHandler.postDelayed(updateTimer, 1000);
 	}
+	
+	private Runnable updateTimer = new Runnable() {
+		@Override
+		public void run() {
+			uptimeRaw++;
+			data.put("Uptime", SystemStatusUpdater.computeUptimeString(uptimeRaw));
+			update();
+			updateHandler.postDelayed(this, 1000);
+		}
+	};
 	
 	@Override
 	public void activate() {

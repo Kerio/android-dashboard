@@ -32,8 +32,10 @@ public class SystemStatusUpdater extends PeriodicTask {
 	static final String antivirusBothFailed = "Internal and external Antivirus failed";
 
 	private boolean isUnregisteredTrial;
+	private Integer uptimeRaw;
 
 	public class SystemStatus {
+		public Integer uptimeRaw;
 		public String uptime;
 		public String update;
 		public String antivirus;
@@ -52,7 +54,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 	}
 	
 	@SuppressLint("DefaultLocale")
-	private String computeUptimeString(int uptime) {
+	public static String computeUptimeString(int uptime) {
 		int seconds = uptime % 60;
 		uptime /= 60;
 		int minutes = uptime % 60;
@@ -68,7 +70,8 @@ public class SystemStatusUpdater extends PeriodicTask {
 
 		try {
 			if (queryResult != null) { 
-				return computeUptimeString(queryResult.getInt("uptime"));
+				this.uptimeRaw = queryResult.getInt("uptime");
+				return computeUptimeString(this.uptimeRaw);
 			}
 		} catch (JSONException e) {
 			Log.d("SystemStatusTile::getValue()", e.toString());
@@ -333,6 +336,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 		SystemStatus ss = new SystemStatus();
 		
 		ss.uptime = this.getUptime();
+		ss.uptimeRaw = this.uptimeRaw;
 		ss.update = this.getControlUpdateStatus();
 		ss.antivirus = this.getAntivirusStatus();
 		ss.ips = this.getIpsStatus();
