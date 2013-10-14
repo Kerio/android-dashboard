@@ -1,5 +1,7 @@
 package com.kerio.dashboard;
 
+import java.util.LinkedHashMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,7 +60,12 @@ public class VpnInfoTileUpdater extends PeriodicTask{
 					JSONObject iface = interfaces.getJSONObject(i);
 					if((iface.getString("type").equals("VpnTunnel")) && (!iface.getString("id").equals("VpnServer"))){
 						vi.tunnels[j][0] = iface.getString("name");
-						vi.tunnels[j][1] = iface.getString("linkStatus");
+						if (iface.getBoolean("enabled")) {
+							vi.tunnels[j][1] = "Disabled";
+						}
+						else {
+							vi.tunnels[j][1] = iface.getString("linkStatus");	
+						}
 						j++;
 					}
 				}
@@ -128,8 +135,15 @@ public class VpnInfoTileUpdater extends PeriodicTask{
 			this.notify("Unable to make JSONObject for active vpn hosts");
 		}
 		
-		activeHosts = this.client.exec("ActiveHosts.get", activeHostsArguments);
-		vpnInterfaces = this.client.exec("Interfaces.get", interfacesArguments);
+		
+		LinkedHashMap<String, JSONObject> requests = new LinkedHashMap<String, JSONObject>();
+		requests.put("ActiveHosts.get", activeHostsArguments);
+		requests.put("Interfaces.get", interfacesArguments);
+		LinkedHashMap<String, JSONObject> response = this.client.execBatch(requests);
+		
+		activeHosts = response.get("ActiveHosts.get");
+		vpnInterfaces = response.get("Interfaces.get");
+		
 		if ((activeHosts == null) || vpnInterfaces == null) {
  			this.notify("Unable to update");
 			return false;

@@ -35,6 +35,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 
 	private LinkedHashMap<String, JSONObject> response;
 	
+	private boolean isNewVersion;
 	private boolean isUnregisteredTrial;
 	private Integer uptimeRaw;
 
@@ -178,6 +179,14 @@ public class SystemStatusUpdater extends PeriodicTask {
 		requests.put("IntrusionPrevention.getUpdateStatus", new JSONObject());
 		requests.put("ProductInfo.get", new JSONObject());
 		
+		JSONObject productInfo = this.client.exec("ProductInfo.get", new JSONObject());
+		this.isNewVersion = newVersion(productInfo);
+		if(this.isNewVersion){
+			requests.put("ContentFilter.getUrlFilterConfig", new JSONObject());
+		}else{
+			requests.put("HttpPolicy.getUrlFilterConfig", new JSONObject());
+		}
+		
 		JSONObject interfaceParams;
 		try {
 			interfaceParams = new JSONObject(
@@ -263,12 +272,12 @@ public class SystemStatusUpdater extends PeriodicTask {
 			return notAvaible;
 		}
 		
-		JSONObject productInfo = this.response.get("ProductInfo.get");
 		JSONObject queryResult;
-		if(newVersion(productInfo)){
-			queryResult = this.client.exec("ContentFilter.getUrlFilterConfig", new JSONObject());
-		}else{
-			queryResult = this.client.exec("HttpPolicy.getUrlFilterConfig", new JSONObject());
+		if (this.isNewVersion) {
+			queryResult = this.response.get("ContentFilter.getUrlFilterConfig");
+		}
+		else {
+			queryResult = this.response.get("HttpPolicy.getUrlFilterConfig");
 		}
 		
 		if (queryResult == null) {
@@ -312,19 +321,6 @@ public class SystemStatusUpdater extends PeriodicTask {
 	}
 	
 	private JSONObject getVpnServerJson() {
-		
-		JSONObject params;
-		try {
-			params = new JSONObject(
-				"{\"sortByGroup\":true,\"query\":{" +
-					"\"conditions\":[{\"fieldName\":\"type\",\"comparator\":\"Eq\",\"value\":\"VpnServer\"}]," +
-					"\"combining\":\"Or\",\"orderBy\":[{\"columnName\":\"name\",\"direction\":\"Asc\"}]" +
-				"}}"
-			);
-		} catch (JSONException e) {
-			params = new JSONObject();
-		}
-		
 		JSONObject queryResult = this.response.get("Interfaces.get");
 		if (queryResult == null) {
 			return null;

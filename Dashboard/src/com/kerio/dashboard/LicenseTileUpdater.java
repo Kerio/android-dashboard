@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 
 import com.kerio.dashboard.api.ApiClient;
@@ -102,6 +103,7 @@ protected ApiClient client;
 		}
 	}
 	
+	@SuppressLint("SimpleDateFormat")
 	private void getExpirations(){
 		try{
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

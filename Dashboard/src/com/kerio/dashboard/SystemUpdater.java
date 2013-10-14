@@ -1,5 +1,7 @@
 package com.kerio.dashboard;
 
+import java.util.LinkedHashMap;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,8 +29,14 @@ public class SystemUpdater extends PeriodicTask {
 		
 		JSONObject emptyArguments = new JSONObject();
 		
-		JSONObject infoResult = this.client.exec("ProductInfo.get", emptyArguments);
-		JSONObject nameResult = this.client.exec("ProductInfo.getSystemHostname", emptyArguments);
+		LinkedHashMap<String, JSONObject> requests = new LinkedHashMap<String, JSONObject>();
+		requests.put("ProductInfo.get", emptyArguments);
+		requests.put("ProductInfo.getSystemHostname", emptyArguments);
+		LinkedHashMap<String, JSONObject> response = this.client.execBatch(requests);
+		
+		JSONObject infoResult = response.get("ProductInfo.get");
+		JSONObject nameResult = response.get("ProductInfo.getSystemHostname");
+		
 		if ((infoResult == null) || (nameResult == null)) {
  			this.notify("Unable to update");
 			return;
