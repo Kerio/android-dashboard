@@ -111,7 +111,7 @@ public class ConnectivityTile extends TextTile{
 			valueView.setTypeface(null, Typeface.BOLD);
 		}
 		else if (entry.getValue().equalsIgnoreCase("down")) {
-			keyView.setTextColor(Color.LTGRAY);
+			valueView.setTextColor(Color.LTGRAY);
 		}
 		
 		return valueView;

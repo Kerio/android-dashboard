@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 
 import com.kerio.dashboard.NotificationUpdater;
+import com.kerio.dashboard.R;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.api.NotificationGetter.Notification;
@@ -86,24 +87,24 @@ public class NotificationTile extends Tile {
 			ImageView icon = new ImageView(this.getContext());
 			{
 				RelativeLayout.LayoutParams iconParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//				iconParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 				iconParams.addRule(RelativeLayout.CENTER_VERTICAL);
 				
 				icon.setLayoutParams(iconParams);
 				switch (notification.type) {
 				case Info:
-					icon.setImageResource(android.R.drawable.presence_online);
+					icon.setImageResource(R.drawable.notification_info);
 					break;
 				case Error:
-					icon.setImageResource(android.R.drawable.presence_busy);
+					icon.setImageResource(R.drawable.notification_error);
 					break;
 				case Warning:
-					icon.setImageResource(android.R.drawable.stat_sys_warning);
+					icon.setImageResource(R.drawable.notification_warning);
 					break;
 				default:
 					break;
 				}
 			}
+			icon.setPadding(0, 2, 2, 0);
 			rl.addView(icon);
 
 			// create description
