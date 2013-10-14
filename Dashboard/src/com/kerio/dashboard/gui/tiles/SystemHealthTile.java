@@ -11,10 +11,14 @@ import com.kerio.dashboard.SystemHealthUpdater.HealthData;
 import com.kerio.dashboard.SystemHealthUpdater.HealthData.Summary;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
+import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
+
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Message;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class SystemHealthTile extends Tile {
 
@@ -120,6 +124,18 @@ public class SystemHealthTile extends Tile {
 			result.put("CPU", String.format("%.2f%%", this.cpuUsage));
 			result.put("Disk", String.format("%.2f GB of %.2f GB used", Double.valueOf(this.diskTotal - this.diskFree) / (1024*1024*1024), Double.valueOf(this.diskTotal) / (1024*1024*1024)));
 			return result;
+		}
+		
+		@Override
+		protected TextView renderKeyView(Pairs.Entry<String, String> entry) {
+			TextView keyView = new TextView(this.getContext());
+			keyView.setText(entry.getKey());
+			keyView.setTypeface(null, Typeface.BOLD);
+			keyView.setPadding(10, 0, 20, 0);
+			
+			keyView.setTextSize(12);
+			
+			return keyView;
 		}
 		
 		private double cpuUsage;

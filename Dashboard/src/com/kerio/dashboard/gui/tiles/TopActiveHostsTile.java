@@ -3,13 +3,17 @@ package com.kerio.dashboard.gui.tiles;
 import java.security.InvalidParameterException;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Message;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.kerio.dashboard.ConnectivityTileUpdater.Connectivity;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.TopActiveHostsTileUpdater;
 import com.kerio.dashboard.TopActiveHostsTileUpdater.TopActiveHosts;
 import com.kerio.dashboard.api.ApiClient;
+import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
 
 public class TopActiveHostsTile extends TextTile{
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -63,28 +67,50 @@ public class TopActiveHostsTileHandler extends TileHandler {
 		if (!(data instanceof TopActiveHosts)) {
 			throw new InvalidParameterException("TopActiveHosts expected");
 		}
-
+		
+		String hostName = "";
 		TopActiveHosts tah = (TopActiveHosts)data;
 		this.data = new Pairs();
 		
 		this.data.put("Download", " ");
-		if(tah.download == null){
+		if(tah.download == null || 0 == tah.download.length){
 			this.data.put("No hosts...", "");
 		}else{
 			for(int i=0;i<tah.download.length;i++){
-				this.data.put(tah.download[i][0]+" - "+tah.download[i][1],tah.download[i][2]+" KB/s");
+				hostName = tah.download[i][0];
+				hostName += 0 != tah.download[i][1].length() ? " - " + tah.download[i][1] : "";
+				this.data.put(hostName,tah.download[i][2]+" KB/s");
 			}
 		}
 		
 		this.data.put("Upload", " ");
-		if(tah.upload == null){
+		if (tah.upload == null){
 			this.data.put("No hosts...", "");
-		}else{
-			for(int i=0;i<tah.upload.length;i++){
-				this.data.put(tah.upload[i][0]+" - "+tah.upload[i][1]+" ", tah.upload[i][2]+" KB/s");
+		}
+		else {
+			for (int i = 0; i < tah.upload.length; i++) {
+				hostName = tah.upload[i][0];
+				hostName += 0 != tah.upload[i][1].length() ? " - " + tah.upload[i][1] : "";
+				this.data.put(hostName, tah.upload[i][2] + " KB/s");
 			}
 		}
 		this.update();
+	}
+	
+	@Override
+	protected TextView renderKeyView(Pairs.Entry<String, String> entry) {
+		TextView keyView = new TextView(this.getContext());
+		keyView.setText(entry.getKey());
+
+		if(entry.getKey().equalsIgnoreCase("download") || entry.getKey().equalsIgnoreCase("upload")){
+			keyView.setTypeface(null, Typeface.BOLD);
+		}
+		
+		keyView.setWidth(190);
+		keyView.setPadding(10, 0, 0, 0);
+		keyView.setTextSize(12);
+		
+		return keyView;
 	}
 	
 	@Override
