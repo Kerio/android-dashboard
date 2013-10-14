@@ -46,20 +46,14 @@ public abstract class TextTile extends Tile {
 			TextView keyView = renderKeyView(entry);
 			row.addView(keyView);
 
-			TextView valueView = new TextView(this.getContext());
-			valueView.setText(entry.getValue());
+			TextView valueView = renderValueView(entry);
 			row.addView(valueView);
-			
-			keyView.setVisibility(View.VISIBLE);
-			valueView.setVisibility(View.VISIBLE);
-			valueView.setTextSize(12);
 			
 			Log.d("TextView", "Adding " + entry.getKey() + ": " + entry.getValue());
 			this.table.addView(row);
 		}
 	}
 	
-	/* Is overwrited in TopActiveHostTile and SystemHealthTile */
 	protected TextView renderKeyView(Pairs.Entry<String, String> entry) {
 		TextView keyView = new TextView(this.getContext());
 		keyView.setText(entry.getKey());
@@ -67,8 +61,18 @@ public abstract class TextTile extends Tile {
 		keyView.setWidth(190);
 		keyView.setPadding(10, 0, 0, 0);
 		keyView.setTextSize(12);
+		keyView.setVisibility(View.VISIBLE);
 		
 		return keyView;
+	}
+	
+	protected TextView renderValueView(Pairs.Entry<String, String> entry) {
+		TextView valueView = new TextView(this.getContext());
+		valueView.setText(entry.getValue());
+		valueView.setTextSize(12);
+		valueView.setVisibility(View.VISIBLE);
+		
+		return valueView;
 	}
 	
 	private void initialize() {

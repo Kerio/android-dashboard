@@ -4,12 +4,16 @@ import java.security.InvalidParameterException;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Message;
+import android.view.View;
+import android.widget.TextView;
 
 import com.kerio.dashboard.ConnectivityTileUpdater;
 import com.kerio.dashboard.ConnectivityTileUpdater.Connectivity;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
+import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
 
 public class ConnectivityTile extends TextTile{
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -66,15 +70,51 @@ public class ConnectivityTile extends TextTile{
 
 		Connectivity con = (Connectivity)data;
 		this.data = new Pairs();
-		this.data.put("Name - Status", "Current Rx/Tx");
+		this.data.put("Name", "Current Rx/Tx");
 		if(con.interfaces != null){
 			for(int i=0;i<con.interfaces.length;i++){
-				this.data.put(con.interfaces[i][0]+" - "+con.interfaces[i][1], con.interfaces[i][2]);
+				if(con.interfaces[i][1].equalsIgnoreCase("up")) {
+					this.data.put(con.interfaces[i][0], con.interfaces[i][2]);
+				}
+				else {
+					this.data.put(con.interfaces[i][0], con.interfaces[i][1]);
+				}
 			}
 		}else{
 			this.data.put("No Internet connection found", " ");
 		}
 		this.update();
+	}
+	
+	@Override
+	protected TextView renderKeyView(Pairs.Entry<String, String> entry) {
+		TextView keyView = super.renderKeyView(entry);
+
+		if(entry.getKey().equalsIgnoreCase("Name")){
+			keyView.setTypeface(null, Typeface.BOLD);
+		}
+		else {
+			if (entry.getValue().equalsIgnoreCase("down")) {
+				keyView.setTextColor(Color.LTGRAY);
+			}
+			keyView.setTypeface(null, Typeface.NORMAL);
+		}
+		
+		return keyView;
+	}
+	
+	@Override
+	protected TextView renderValueView(Pairs.Entry<String, String> entry) {
+		TextView valueView = super.renderValueView(entry);
+		
+		if(entry.getKey().equalsIgnoreCase("Name")){
+			valueView.setTypeface(null, Typeface.BOLD);
+		}
+		else if (entry.getValue().equalsIgnoreCase("down")) {
+			keyView.setTextColor(Color.LTGRAY);
+		}
+		
+		return valueView;
 	}
 
 	@Override

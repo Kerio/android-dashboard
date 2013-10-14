@@ -17,6 +17,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Message;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -128,12 +129,8 @@ public class SystemHealthTile extends Tile {
 		
 		@Override
 		protected TextView renderKeyView(Pairs.Entry<String, String> entry) {
-			TextView keyView = new TextView(this.getContext());
-			keyView.setText(entry.getKey());
-			keyView.setTypeface(null, Typeface.BOLD);
+			TextView keyView = super.renderKeyView(entry);
 			keyView.setPadding(10, 0, 20, 0);
-			
-			keyView.setTextSize(12);
 			
 			return keyView;
 		}

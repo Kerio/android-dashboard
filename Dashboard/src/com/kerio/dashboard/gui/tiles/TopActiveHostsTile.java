@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.kerio.dashboard.ConnectivityTileUpdater.Connectivity;
@@ -72,7 +73,7 @@ public class TopActiveHostsTileHandler extends TileHandler {
 		TopActiveHosts tah = (TopActiveHosts)data;
 		this.data = new Pairs();
 		
-		this.data.put("Download", " ");
+		this.data.put("Download", "Current Rx");
 		if(tah.download == null || 0 == tah.download.length){
 			this.data.put("No hosts...", "");
 		}else{
@@ -83,7 +84,7 @@ public class TopActiveHostsTileHandler extends TileHandler {
 			}
 		}
 		
-		this.data.put("Upload", " ");
+		this.data.put("Upload", "Current Tx");
 		if (tah.upload == null){
 			this.data.put("No hosts...", "");
 		}
@@ -99,18 +100,27 @@ public class TopActiveHostsTileHandler extends TileHandler {
 	
 	@Override
 	protected TextView renderKeyView(Pairs.Entry<String, String> entry) {
-		TextView keyView = new TextView(this.getContext());
-		keyView.setText(entry.getKey());
+		TextView keyView = super.renderKeyView(entry);
 
 		if(entry.getKey().equalsIgnoreCase("download") || entry.getKey().equalsIgnoreCase("upload")){
 			keyView.setTypeface(null, Typeface.BOLD);
 		}
-		
-		keyView.setWidth(190);
-		keyView.setPadding(10, 0, 0, 0);
-		keyView.setTextSize(12);
+		else {
+			keyView.setTypeface(null, Typeface.NORMAL);
+		}
 		
 		return keyView;
+	}
+	
+	@Override
+	protected TextView renderValueView(Pairs.Entry<String, String> entry) {
+		TextView valueView = super.renderValueView(entry);
+		
+		if(entry.getKey().equalsIgnoreCase("download") || entry.getKey().equalsIgnoreCase("upload")){
+			valueView.setTypeface(null, Typeface.BOLD);
+		}
+		
+		return valueView;
 	}
 	
 	@Override
