@@ -74,6 +74,7 @@ public class NotificationTile extends Tile {
 			LayoutParams llParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			holder.setLayoutParams(llParams);
 			holder.setOrientation(LinearLayout.VERTICAL);
+			holder.setPadding(3, 0, 5, 10);
 		}
 
 		// Create Relative layout
@@ -104,7 +105,7 @@ public class NotificationTile extends Tile {
 					break;
 				}
 			}
-			icon.setPadding(0, 2, 2, 0);
+			icon.setPadding(0, 2, 5, 0);
 			rl.addView(icon);
 
 			// create description
@@ -119,13 +120,16 @@ public class NotificationTile extends Tile {
 		}
 		holder.addView(rl);
 		
-		TextView description = new TextView(this.getContext());
-		{
-			//description.setTextAppearance(this.getContext(), android.R.style.TextAppearance_Small);
-			description.setTextSize(12);
-			description.setText(notification.description);
+		if (0 != notification.description.length()) {
+			TextView description = new TextView(this.getContext());
+			{
+				//description.setTextAppearance(this.getContext(), android.R.style.TextAppearance_Small);
+				description.setTextSize(12);
+				description.setText(notification.description);
+				description.setPadding(22, 0, 0, 0);
+			}
+			holder.addView(description);
 		}
-		holder.addView(description);
 
 		return holder;
 	}
