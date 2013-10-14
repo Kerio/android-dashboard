@@ -144,6 +144,12 @@ public class ApiClient{
 		return null;
 	}
 	
+	/**
+	 * Send batch of requests to one server
+	 * 
+	 * @param requests List of request as pair of "Method" and "Params"
+	 * @return List of pairs "Method" and "Response"
+	 */
 	public LinkedHashMap<String, JSONObject> execBatch(LinkedHashMap<String, JSONObject> requests) {
 		error = "";
 		JSONObject data = new JSONObject();
@@ -151,6 +157,7 @@ public class ApiClient{
 		JSONArray commandList = new JSONArray();
 		
 		try {
+			//create list of commands to be sent
 			for (Pairs.Entry<String, JSONObject> request : requests.entrySet()) {
 				JSONObject oneParam = new JSONObject();
 				oneParam.put("method", request.getKey());
@@ -159,6 +166,7 @@ public class ApiClient{
 			}
 			params.put("commandList", commandList);
 			
+			//add jsonrpc parameters
 			data.put("jsonrpc", 2.0);
 			data.put("id", 1);
 			data.put("method", "Batch.run");
@@ -166,24 +174,27 @@ public class ApiClient{
 		} catch (JSONException e) {
 			Log.d("ApiClient", error);
 			return null;
-		}
-		
 
-		String query = new String(data.toString());
+		
 		try {
+			//send http requests
+			String query = new String(data.toString());
+	
 			HttpPost httpPost = new HttpPost(getUrl());
-			httpPost.setEntity(new StringEntity(query));
+			httpPost.setEntity(new StringEntity(query));			
 			
-			if (token != null) {
-				httpPost.setHeader("X-Token", token);
+			if (this.token != null) {
+				httpPost.setHeader("X-Token", this.token);
 			}
-			HttpResponse resp = httpClient.execute(httpPost);
+			HttpResponse resp = this.httpClient.execute(httpPost);
 			
+			//handle response
 			StatusLine status = resp.getStatusLine();
 		    if (status.getStatusCode() == 200) {
 		    	
 		    	JSONArray response = processEntity(resp.getEntity()).getJSONArray("result");
 		    	
+		    	//separate responses for each requests
 		    	int i = 0;
 		    	for (Pairs.Entry<String, JSONObject> request : requests.entrySet()) {
 					requests.put(request.getKey(), response.getJSONObject(i).getJSONObject("result"));
