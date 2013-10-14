@@ -1,5 +1,7 @@
 package com.kerio.dashboard;
 
+import java.util.LinkedHashMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +33,8 @@ public class SystemStatusUpdater extends PeriodicTask {
 	static final String antivirusExternalFailed = "External antivirus failed";
 	static final String antivirusBothFailed = "Internal and external Antivirus failed";
 
+	private LinkedHashMap<String, JSONObject> response;
+	
 	private boolean isUnregisteredTrial;
 	private Integer uptimeRaw;
 
@@ -66,8 +70,8 @@ public class SystemStatusUpdater extends PeriodicTask {
 	}
 	private String getUptime()
 	{
-		JSONObject queryResult = this.client.exec("ProductInfo.getUptime", new JSONObject());
-
+		JSONObject queryResult = this.response.get("ProductInfo.getUptime");
+		
 		try {
 			if (queryResult != null) { 
 				this.uptimeRaw = queryResult.getInt("uptime");
@@ -81,7 +85,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 	}
 
 	private String getControlUpdateStatus() {
-		JSONObject queryResult = this.client.exec("UpdateChecker.getStatus", new JSONObject());
+		JSONObject queryResult = this.response.get("UpdateChecker.getStatus");
 		if (queryResult == null) {
 			return checkFailed;
 		}
@@ -109,8 +113,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 	}
 	
 	private String getAntivirusStatus() { 
-		
-		JSONObject queryResult = this.client.exec("Antivirus.get", new JSONObject());
+		JSONObject queryResult = this.response.get("Antivirus.get");
 		if (queryResult == null) {
 			return checkFailed;
 		}
@@ -142,7 +145,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 			return antivirusBothFailed;
 		}
 		
-		queryResult = this.client.exec("Antivirus.getUpdateStatus", new JSONObject());
+		queryResult = this.response.get("Antivirus.getUpdateStatus");
 		if (queryResult == null) {
 			return checkFailed;
 		}
@@ -164,9 +167,37 @@ public class SystemStatusUpdater extends PeriodicTask {
 		return working;
 		}
 
-	public String getIpsStatus() {
+	public void sendRequests() {
+		LinkedHashMap<String, JSONObject> requests = new LinkedHashMap<String, JSONObject>();
 		
-		JSONObject queryResult = this.client.exec("IntrusionPrevention.get", new JSONObject());
+		requests.put("ProductInfo.getUptime", new JSONObject());
+		requests.put("UpdateChecker.getStatus", new JSONObject());
+		requests.put("Antivirus.get", new JSONObject());
+		requests.put("Antivirus.getUpdateStatus", new JSONObject());
+		requests.put("IntrusionPrevention.get", new JSONObject());
+		requests.put("IntrusionPrevention.getUpdateStatus", new JSONObject());
+		requests.put("ProductInfo.get", new JSONObject());
+		
+		JSONObject interfaceParams;
+		try {
+			interfaceParams = new JSONObject(
+				"{\"sortByGroup\":true,\"query\":{" +
+					"\"conditions\":[{\"fieldName\":\"type\",\"comparator\":\"Eq\",\"value\":\"VpnServer\"}]," +
+					"\"combining\":\"Or\",\"orderBy\":[{\"columnName\":\"name\",\"direction\":\"Asc\"}]" +
+				"}}"
+			);
+		} catch (JSONException e) {
+			interfaceParams = new JSONObject();
+		}
+		
+		requests.put("Interfaces.get", interfaceParams);
+		
+		this.response = this.client.execBatch(requests);
+	}
+	
+	public String getIpsStatus() {
+		this.sendRequests();
+		JSONObject queryResult = this.response.get("IntrusionPrevention.get");
 		if (queryResult == null) {
 			return checkFailed;
 		}
@@ -182,8 +213,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 			return checkFailed;
 		}
 		
-		queryResult = this.client.exec("IntrusionPrevention.getUpdateStatus", new JSONObject());
-
+		queryResult = this.response.get("IntrusionPrevention.getUpdateStatus");
 		try {
 			updateStatus = queryResult.getString("status");
 		} catch (JSONException e) {
@@ -233,7 +263,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 			return notAvaible;
 		}
 		
-		JSONObject productInfo = this.client.exec("ProductInfo.get", new JSONObject());
+		JSONObject productInfo = this.response.get("ProductInfo.get");
 		JSONObject queryResult;
 		if(newVersion(productInfo)){
 			queryResult = this.client.exec("ContentFilter.getUrlFilterConfig", new JSONObject());
@@ -295,7 +325,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 			params = new JSONObject();
 		}
 		
-		JSONObject queryResult = this.client.exec("Interfaces.get", params);
+		JSONObject queryResult = this.response.get("Interfaces.get");
 		if (queryResult == null) {
 			return null;
 		}
@@ -334,6 +364,7 @@ public class SystemStatusUpdater extends PeriodicTask {
 	public void execute() {
 		
 		SystemStatus ss = new SystemStatus();
+		this.sendRequests();
 		
 		ss.uptime = this.getUptime();
 		ss.uptimeRaw = this.uptimeRaw;

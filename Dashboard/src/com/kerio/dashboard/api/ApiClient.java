@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.LinkedHashMap;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -36,12 +37,21 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
+
 import android.util.Log;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class ApiClient{
+	LinkedHashMap<String, JSONObject> response = null;
+	
 	public ApiClient(String server) {
 		this.server = server;
 		this.port = 0;
@@ -132,6 +142,64 @@ public class ApiClient{
 		
 		Log.d("ApiClient", error);
 		return null;
+	}
+	
+	public LinkedHashMap<String, JSONObject> execBatch(LinkedHashMap<String, JSONObject> requests) {
+		error = "";
+		JSONObject data = new JSONObject();
+		JSONObject params = new JSONObject();
+		JSONArray commandList = new JSONArray();
+		
+		try {
+			for (Pairs.Entry<String, JSONObject> request : requests.entrySet()) {
+				JSONObject oneParam = new JSONObject();
+				oneParam.put("method", request.getKey());
+				oneParam.put("params", request.getValue());				
+				commandList.put(oneParam);
+			}
+			params.put("commandList", commandList);
+			
+			data.put("jsonrpc", 2.0);
+			data.put("id", 1);
+			data.put("method", "Batch.run");
+			data.put("params", params);
+		} catch (JSONException e) {
+			Log.d("ApiClient", error);
+			return null;
+		}
+		
+
+		String query = new String(data.toString());
+		try {
+			HttpPost httpPost = new HttpPost(getUrl());
+			httpPost.setEntity(new StringEntity(query));
+			
+			if (token != null) {
+				httpPost.setHeader("X-Token", token);
+			}
+			HttpResponse resp = httpClient.execute(httpPost);
+			
+			StatusLine status = resp.getStatusLine();
+		    if (status.getStatusCode() == 200) {
+		    	
+		    	JSONArray response = processEntity(resp.getEntity()).getJSONArray("result");
+		    	
+		    	int i = 0;
+		    	for (Pairs.Entry<String, JSONObject> request : requests.entrySet()) {
+					requests.put(request.getKey(), response.getJSONObject(i).getJSONObject("result"));
+					i++;
+				}
+		    	return requests;
+		    }
+		    
+		    error = "Invalid response from server: " + status.toString();	
+		} catch (Exception e) {
+			error = e.toString();
+		}
+		
+		Log.d("ApiClient", error);
+		return null;
+		
 	}
 	
 	public String getLastError() {
