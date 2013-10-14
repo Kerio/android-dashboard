@@ -174,6 +174,7 @@ public class ApiClient{
 		} catch (JSONException e) {
 			Log.d("ApiClient", error);
 			return null;
+		}
 
 		
 		try {
