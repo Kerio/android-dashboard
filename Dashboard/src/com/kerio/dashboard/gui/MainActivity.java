@@ -3,6 +3,10 @@ package com.kerio.dashboard.gui;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerStatusUpdater;
 import com.kerio.dashboard.config.Config;
@@ -19,9 +23,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
@@ -29,6 +35,7 @@ import android.widget.LinearLayout.LayoutParams;
 public class MainActivity extends Activity {
 
 	private static final int RESULT_SETTINGS = 1;
+	private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
 
 	private ServerStatusHandler statusHandler = null;
 	private ServerStatusUpdater serverStatusUpdater;
@@ -99,11 +106,16 @@ public class MainActivity extends Activity {
 	private void addServerTile(ServerTile tile, final ServerConfig server) {
         this.layout.addView(tile);
         final MainActivity me = this;
+        final ServerTile meTile = tile;
 
         OnClickListener serverClickListener = new OnClickListener() {
         	@Override
         	public void onClick(View v) {
-    			me.showDashboard(server);
+    			meTile.touchFeedback();
+    			
+        		if (ServerTile.State.Ok == meTile.tileStatus) {	
+        			me.showDashboard(server);
+        		}
         	}
         };
         tile.setOnClickListener(serverClickListener);

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="server_tile_background">#FFFFFFFF</color>
+    <color name="server_tile_touchfeedback_ok">#FFe2f0b6</color>
+    <color name="server_tile_touchfeedback_error">#FFffcaca</color>
+    <color name="server_tile_touchfeedback_loading">#FFeeeeee</color>
+
+</resources>

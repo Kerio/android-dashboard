@@ -8,6 +8,10 @@ import com.kerio.dashboard.config.ServerConfig;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,9 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 public class ServerTile extends Tile {
+	public static enum State {
+		Ok, Error, Warning, Unknown
+	}
 
 	private LinearLayout holder;
 	
@@ -28,6 +34,7 @@ public class ServerTile extends Tile {
 	private LinearLayout frame;
 	private ImageView appIcon;
 	private LinearLayout border;
+	public State tileStatus;
 	
 	private ServerConfig.ServerType type = ServerConfig.ServerType.CONTROL;
 	
@@ -85,11 +92,8 @@ public class ServerTile extends Tile {
 		this.notes.setVisibility(View.VISIBLE);
 	}
 	
-	private enum State {
-		Ok, Error, Warning, Unknown
-	}
-	
 	private void setState(State state) {
+		this.tileStatus = state;
 		switch (state) {
 		case Ok:
 			this.icon.setImageResource(android.R.drawable.presence_online);
@@ -165,7 +169,7 @@ public class ServerTile extends Tile {
 			llParams.gravity = Gravity.CENTER_VERTICAL;
 			holder.setLayoutParams(llParams);
 			holder.setOrientation(LinearLayout.VERTICAL);
-			frame.setBackgroundColor(Color.WHITE);
+			frame.setBackgroundColor(getResources().getColor(R.color.server_tile_background));
 		}
 		
 		// Create Relative layout
@@ -224,6 +228,43 @@ public class ServerTile extends Tile {
 		return true;
 	}
 	
+	
+	@SuppressWarnings("deprecation")
+	public void touchFeedback() {
+		final AnimationDrawable drawable = new AnimationDrawable();
+		final Handler handler = new Handler();
+		int feedbackColor;
+		
+		
+		if (ServerTile.State.Ok == this.tileStatus) {
+			feedbackColor = getResources().getColor(R.color.server_tile_touchfeedback_ok);
+		}
+		else if (ServerTile.State.Error == this.tileStatus) {
+			feedbackColor = getResources().getColor(R.color.server_tile_touchfeedback_error);
+		}
+		else {
+			feedbackColor = getResources().getColor(R.color.server_tile_touchfeedback_loading);
+		}
+		
+		drawable.addFrame(new ColorDrawable(feedbackColor), 200);
+		drawable.addFrame(new ColorDrawable(getResources().getColor(R.color.server_tile_background)), 50);
+		drawable.setOneShot(true);
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+		    this.frame.setBackground(drawable);
+		} 
+		else {
+		    this.frame.setBackgroundDrawable(drawable);
+		}
+
+		handler.postDelayed(new Runnable() {
+		    @Override
+		    public void run() {
+		        drawable.start();
+		    }
+		}, 100);
+	}
+	
 	@Override
 	public void activate() {
 	}
@@ -233,3 +274,4 @@ public class ServerTile extends Tile {
 	}
 
 }
+;
