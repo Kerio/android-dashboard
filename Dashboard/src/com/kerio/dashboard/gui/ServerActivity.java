@@ -145,6 +145,7 @@ public class ServerActivity extends Activity {
 
 	public void onUpdateStarted()
 	{
+		this.loading.setVisibility(View.VISIBLE);
 	}
 
 	public void onUpdateDone()
