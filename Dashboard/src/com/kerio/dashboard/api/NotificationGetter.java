@@ -19,13 +19,13 @@ public class NotificationGetter {
 		Error,
 		Warning
 	};
-	
+
 	public class Notification
 	{
 		public NotificationType type;
 		public String title;
 		public String description;
-		
+
 		public Notification(NotificationType type, String title, String description)
 		{
 			this.type = type;
@@ -42,7 +42,7 @@ public class NotificationGetter {
 			not.put("type", "NotificationUpdate");
 		} catch (JSONException e) {}
 		this.fakeNotification.put(not);
-		
+
 		this.knownNotifications = new HashMap<String, Notification>();
 		this.knownNotifications.put("NotificationUpdate", new Notification(NotificationType.Info, "New update is available", "A new version of Kerio Control is ready for update."));
 		this.knownNotifications.put("NotificationDump", new Notification(NotificationType.Error, "System fault", "Kerio Control encountered a problem and was restarted. We apologize for the inconvenience."));
@@ -69,11 +69,11 @@ public class NotificationGetter {
 		this.knownNotifications.put("NotificationBackupFailed", new Notification(NotificationType.Warning, "Backup failed", "Automatic configuration backup failed with error message \"%1\"."));
 		this.knownNotifications.put("NotificationPacketDump", new Notification(NotificationType.Warning, "Packet dump in progress", ""));
 	}
-	
+
 	public HashMap<String, Notification> getAllNotifications() {
-		
+
 		HashMap<String, Notification> result = null;
-		
+
 		JSONObject arguments = new JSONObject();
 		try {
 			arguments.put("lastNotifications", this.fakeNotification);
@@ -86,41 +86,45 @@ public class NotificationGetter {
 		if (ret == null) {
 			return result;
 		}
-		
-		try 
+
+		try
 		{
 			JSONArray nn = ret.getJSONArray("notifications");
 			if (nn.length() == 0) {
 				return result;
 			}
-			
+
 			lastNotifications = nn;
 
 			result = new HashMap<String, Notification>();
-			
+
 			for (int i = 0; i < lastNotifications.length(); ++i) {
 				JSONObject notificationInfo = lastNotifications.getJSONObject(i);
 				String key = lastNotifications.getString(i);
-				
+
 				String type = notificationInfo.getString("type");
 				String value = notificationInfo.getString("value");
-				
+
 				Notification notification = this.createNotification(type, value);
-				
+
 				result.put(key, notification);
 			}
 		}
 		catch (JSONException e) {
 		}
-		
+
 		return result;
 	}
-	
+
 	private Notification createNotification(String type, String value) {
 		if ( ! this.knownNotifications.containsKey(type)) {
 			return null;
 		}
-		
-		return this.knownNotifications.get(type);
+		Notification notification = this.knownNotifications.get(type);
+
+		if (!value.isEmpty()) {
+			notification.description = notification.description.replace("%1", value);
+		}
+		return notification;
 	}
 }
