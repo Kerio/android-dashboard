@@ -5,11 +5,8 @@ import java.security.InvalidParameterException;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Message;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
-import com.kerio.dashboard.ConnectivityTileUpdater.Connectivity;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.TopActiveHostsTileUpdater;
 import com.kerio.dashboard.TopActiveHostsTileUpdater.TopActiveHosts;
@@ -17,35 +14,37 @@ import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
 
 public class TopActiveHostsTile extends TextTile{
+	private static String DOWNLOAD_PREFIX = "DOWNLOAD";
+	private static String UPLOAD_PREFIX = "UPLOAD";
 /////////////////////////////////////////////////////////////////////////////////////////
 //SystemStatusHandler
-public class TopActiveHostsTileHandler extends TileHandler {
-	TopActiveHostsTile tile;
+	public class TopActiveHostsTileHandler extends TileHandler {
+		TopActiveHostsTile tile;
 
-	public TopActiveHostsTileHandler(TopActiveHostsTile tile) {
-		super(tile);
-		this.tile = tile;
-	}
-
-	@Override
-	public void handleMsg(Message msg) {
-
-		if (msg.obj instanceof TopActiveHosts) {
-			this.tile.setData(msg.obj);
+		public TopActiveHostsTileHandler(TopActiveHostsTile tile) {
+			super(tile);
+			this.tile = tile;
 		}
-		else if (msg.obj instanceof String) {
-			this.tile.onUpdateError((String)msg.obj);
-		} else {
-			throw new RuntimeException("TopActiveHostsTileHandler: unknown object type");
+
+		@Override
+		public void handleMsg(Message msg) {
+
+			if (msg.obj instanceof TopActiveHosts) {
+				this.tile.setData(msg.obj);
+			}
+			else if (msg.obj instanceof String) {
+				this.tile.onUpdateError((String)msg.obj);
+			} else {
+				throw new RuntimeException("TopActiveHostsTileHandler: unknown object type");
+			}
 		}
 	}
-}
 //SystemStatusHandler
 /////////////////////////////////////////////////////////////////////////////////////////
 
 	private Pairs data;
-	private TopActiveHostsTileHandler topActiveHostsTileHandler;
-	private TopActiveHostsTileUpdater topActiveHostsTileUpdater;
+	private final TopActiveHostsTileHandler topActiveHostsTileHandler;
+	private final TopActiveHostsTileUpdater topActiveHostsTileUpdater;
 
 	public TopActiveHostsTile(Context context, ApiClient client) {
 		super(context, client);
@@ -53,9 +52,9 @@ public class TopActiveHostsTileHandler extends TileHandler {
 		this.topActiveHostsTileHandler = new TopActiveHostsTileHandler(this);
 		this.topActiveHostsTileUpdater = new TopActiveHostsTileUpdater(this.topActiveHostsTileHandler, client); // TODO: make it autolaunchable
 		this.topActiveHostsTileUpdater.activate();
-	//this.systemStatusHandler.post(this.systemStatusUpdater); 
+	//this.systemStatusHandler.post(this.systemStatusUpdater);
 	}
-	
+
 	@Override
 	public Pairs getKeyValuePairs() { return this.data; }
 
@@ -68,69 +67,78 @@ public class TopActiveHostsTileHandler extends TileHandler {
 		if (!(data instanceof TopActiveHosts)) {
 			throw new InvalidParameterException("TopActiveHosts expected");
 		}
-		
-		String hostName = "";
+
+		String hostName;
 		TopActiveHosts tah = (TopActiveHosts)data;
 		this.data = new Pairs();
-		
-		this.data.put("Download", "Current Rx");
+
+		this.data.put(TopActiveHostsTile.DOWNLOAD_PREFIX + "Download", "Current Rx");
 		if(tah.download == null || 0 == tah.download.length){
 			this.data.put("No hosts...", "");
 		}else{
-			for(int i=0;i<tah.download.length;i++){
-				hostName = tah.download[i][0];
-				hostName += 0 != tah.download[i][1].length() ? " - " + tah.download[i][1] : "";
-				this.data.put(hostName,tah.download[i][2]+" KB/s");
+			for (String[] download : tah.download) {
+				hostName = download[0];
+				hostName += 0 != download[1].length() ? " - " + download[1] : "";
+				this.data.put(TopActiveHostsTile.DOWNLOAD_PREFIX + hostName, download[2] + " KB/s");
 			}
 		}
-		
-		this.data.put("Upload", "Current Tx");
+
+		this.data.put(TopActiveHostsTile.UPLOAD_PREFIX + "Upload", "Current Tx");
 		if (tah.upload == null){
 			this.data.put("No hosts...", "");
 		}
 		else {
-			for (int i = 0; i < tah.upload.length; i++) {
-				hostName = tah.upload[i][0];
-				hostName += 0 != tah.upload[i][1].length() ? " - " + tah.upload[i][1] : "";
-				this.data.put(hostName, tah.upload[i][2] + " KB/s");
+			for (String[] upload : tah.upload) {
+				hostName = upload[0];
+				hostName += 0 != upload[1].length() ? " - " + upload[1] : "";
+				this.data.put(TopActiveHostsTile.UPLOAD_PREFIX + hostName, upload[2] + " KB/s");
 			}
 		}
 		this.update();
 	}
-	
+
 	@Override
 	protected TextView renderKeyView(Pairs.Entry<String, String> entry) {
 		TextView keyView = super.renderKeyView(entry);
+		String key = entry.getKey();
 
-		if(entry.getKey().equalsIgnoreCase("download") || entry.getKey().equalsIgnoreCase("upload")){
+		if (0 == key.indexOf(TopActiveHostsTile.DOWNLOAD_PREFIX)) {
+			key = key.substring(TopActiveHostsTile.DOWNLOAD_PREFIX.length());
+		}
+		else if (0 == key.indexOf(TopActiveHostsTile.UPLOAD_PREFIX)) {
+			key = key.substring(TopActiveHostsTile.UPLOAD_PREFIX.length());
+		}
+		keyView.setText(key);
+
+		if(key.equalsIgnoreCase("download") || key.equalsIgnoreCase("upload")){
 			keyView.setTypeface(null, Typeface.BOLD);
 		}
 		else {
 			keyView.setTypeface(null, Typeface.NORMAL);
 		}
-		
+
 		return keyView;
 	}
-	
+
 	@Override
 	protected TextView renderValueView(Pairs.Entry<String, String> entry) {
 		TextView valueView = super.renderValueView(entry);
-		
-		if(entry.getKey().equalsIgnoreCase("download") || entry.getKey().equalsIgnoreCase("upload")){
+
+		if(entry.getKey().equalsIgnoreCase(TopActiveHostsTile.DOWNLOAD_PREFIX + "download") || entry.getKey().equalsIgnoreCase(TopActiveHostsTile.UPLOAD_PREFIX + "upload")){
 			valueView.setTypeface(null, Typeface.BOLD);
 		}
-		
+
 		return valueView;
 	}
-	
+
 	@Override
 	public void activate() {
-		this.topActiveHostsTileUpdater.activate();		
+		this.topActiveHostsTileUpdater.activate();
 	}
 
 	@Override
 	public void deactivate() {
-		this.topActiveHostsTileUpdater.deactivate();		
+		this.topActiveHostsTileUpdater.deactivate();
 	}
 
 }
