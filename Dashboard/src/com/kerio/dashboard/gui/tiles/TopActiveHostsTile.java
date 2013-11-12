@@ -15,8 +15,8 @@ import com.kerio.dashboard.api.ApiClient;
 public class TopActiveHostsTile extends TextTile{
 	private static String DOWNLOAD_PREFIX = "DOWNLOAD";
 	private static String UPLOAD_PREFIX = "UPLOAD";
-/////////////////////////////////////////////////////////////////////////////////////////
-//SystemStatusHandler
+	/////////////////////////////////////////////////////////////////////////////////////////
+	//SystemStatusHandler
 	public class TopActiveHostsTileHandler extends TileHandler {
 		TopActiveHostsTile tile;
 
@@ -38,8 +38,8 @@ public class TopActiveHostsTile extends TextTile{
 			}
 		}
 	}
-//SystemStatusHandler
-/////////////////////////////////////////////////////////////////////////////////////////
+	//SystemStatusHandler
+	/////////////////////////////////////////////////////////////////////////////////////////
 
 	private Pairs data;
 	private final TopActiveHostsTileHandler topActiveHostsTileHandler;

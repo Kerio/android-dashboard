@@ -11,13 +11,10 @@ import com.kerio.dashboard.SystemHealthUpdater.HealthData;
 import com.kerio.dashboard.SystemHealthUpdater.HealthData.Summary;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
-import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Message;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 

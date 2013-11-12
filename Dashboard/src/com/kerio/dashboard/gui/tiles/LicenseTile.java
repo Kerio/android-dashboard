@@ -7,7 +7,6 @@ import android.os.Message;
 
 import com.kerio.dashboard.LicenseTileUpdater;
 import com.kerio.dashboard.LicenseTileUpdater.LicenseInfo;
-import com.kerio.dashboard.SystemStatusUpdater.SystemStatus;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
 

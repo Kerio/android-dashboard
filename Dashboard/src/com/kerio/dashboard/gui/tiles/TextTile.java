@@ -5,15 +5,12 @@ import java.util.LinkedHashMap;
 import com.kerio.dashboard.api.ApiClient;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 public abstract class TextTile extends Tile {
 
