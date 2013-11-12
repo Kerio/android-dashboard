@@ -52,7 +52,6 @@ public LicenseTile(Context context, ApiClient client) {
 	this.licenseTileHandler = new LicenseTileHandler(this);
     this.licenseTileUpdater = new LicenseTileUpdater(this.licenseTileHandler, client); // TODO: make it autolaunchable
     this.licenseTileUpdater.activate();
-//    this.systemStatusHandler.post(this.systemStatusUpdater); 
 }
 
 @Override

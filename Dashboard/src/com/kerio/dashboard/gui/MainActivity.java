@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerStatusUpdater;
@@ -23,11 +22,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
@@ -35,6 +32,8 @@ import android.widget.LinearLayout.LayoutParams;
 public class MainActivity extends Activity {
 
 	private static final int RESULT_SETTINGS = 1;
+	
+	@SuppressWarnings("unused")
 	private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
 
 	private ServerStatusHandler statusHandler = null;

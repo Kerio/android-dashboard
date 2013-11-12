@@ -28,8 +28,7 @@ public class SystemHealthUpdater extends TileUpdater {
 	}
 	
 	public SystemHealthUpdater(Handler handler, ApiClient client) {
-		super(handler, client);
-		this.method = "SystemHealth.getInc";
+		super(handler, client, "SystemHealth.getInc");
 	}
 	
 	@Override

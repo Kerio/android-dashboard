@@ -32,7 +32,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-//public class ServerActivity extends Activity implements Runnable {
 public class ServerActivity extends Activity {
 
 	private List<Tile> tiles = null;
@@ -280,11 +279,4 @@ public class ServerActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-//	private void showError(String msg) {
-//		TextView c = new TextView(this);
-//    	c.setText(msg);
-//    	LinearLayout dashboard = (LinearLayout)findViewById(R.id.dashboard);
-//    	dashboard.addView(c);
-//	}
 }

@@ -1,13 +1,11 @@
 package com.kerio.dashboard.gui.tiles;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.kerio.dashboard.api.ApiClient;
 
 import android.content.Context;
-import android.util.Log;
 
 public class TileFactory {
 
@@ -56,7 +54,6 @@ public class TileFactory {
 			
 			return result;
 		}
-		//return new Frame(context, "Dummy tile", new DummyTile(context, client, data));
 		return null;
 	}
 	

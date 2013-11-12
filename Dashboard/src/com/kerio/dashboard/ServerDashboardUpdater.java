@@ -22,10 +22,6 @@ public class ServerDashboardUpdater extends PeriodicTask {
 		this.client = client;
 	}
 	
-//	public ServerDashboardUpdater(Handler handler, ServerConfig config, long delay) {
-//		super(handler, delay);
-//		this.config = config;
-//	}
 	
 	@Override
 	public void execute() {

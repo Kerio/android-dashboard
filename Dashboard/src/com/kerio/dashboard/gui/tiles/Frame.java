@@ -41,7 +41,6 @@ public class Frame extends Tile {
 		
 
 		holder.addView(content);
-		//this.setBackgroundColor(Color.LTGRAY);
 		this.setPadding(1, 1, 1, 10);
 		this.addView(holder);
 	}

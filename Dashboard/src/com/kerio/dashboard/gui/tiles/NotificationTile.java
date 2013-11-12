@@ -53,8 +53,7 @@ public class NotificationTile extends Tile {
 		
 		this.notificationHandler = new NotificationHandler(this);
         this.notificationUpdater = new NotificationUpdater(this.notificationHandler, client); // TODO: make it autolaunchable
-        this.notificationUpdater.activate();		
-        this.notificationUpdater.execute();
+        this.notificationUpdater.activate();
 	}
 
 	@Override
@@ -111,7 +110,6 @@ public class NotificationTile extends Tile {
 			// create description
 			TextView title = new TextView(this.getContext());
 			{
-				//title.setTextAppearance(this.getContext(), android.R.style.TextAppearance_Large);
 				title.setTypeface(null, Typeface.BOLD);
 				title.setText(notification.title);
 				title.setTextSize(14);
@@ -123,7 +121,6 @@ public class NotificationTile extends Tile {
 		if (0 != notification.description.length()) {
 			TextView description = new TextView(this.getContext());
 			{
-				//description.setTextAppearance(this.getContext(), android.R.style.TextAppearance_Small);
 				description.setTextSize(12);
 				description.setText(notification.description);
 				description.setPadding(22, 0, 0, 0);

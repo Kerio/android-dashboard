@@ -20,18 +20,6 @@ public abstract class Tile extends LinearLayout {
 		super(context, attrs, defStyle);
 	}
 
-
-	public Tile(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-
-
-	public Tile(Context context) {
-		super(context);
-	}
-
-
-	//TODO smazat
 	public Tile(Context context, ApiClient client) {
 		super(context);
 		this.client = client;

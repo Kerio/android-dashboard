@@ -211,12 +211,11 @@ public class SystemStatusUpdater extends PeriodicTask {
 			return checkFailed;
 		}
 				
-		boolean ipsEnabled; // TODO
 		String updateStatus;
 		
 		try {
 			JSONObject ipsConfig = queryResult.getJSONObject("config");
-			ipsEnabled = ipsConfig.getBoolean("enabled");
+			ipsConfig.getBoolean("enabled");
 		} catch (JSONException e) {
 			Log.d("SystemStatusTile::getIpsStatus()", e.toString());
 			return checkFailed;

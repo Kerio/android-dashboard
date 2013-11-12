@@ -6,14 +6,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Message;
-import android.view.View;
 import android.widget.TextView;
 
 import com.kerio.dashboard.ConnectivityTileUpdater;
 import com.kerio.dashboard.ConnectivityTileUpdater.Connectivity;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
-import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
 
 public class ConnectivityTile extends TextTile{
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +50,6 @@ public class ConnectivityTile extends TextTile{
 		this.connectivityTileHandler = new ConnectivityTileHandler(this);
 		this.connectivityTileUpdater = new ConnectivityTileUpdater(this.connectivityTileHandler, client); // TODO: make it autolaunchable
 		this.connectivityTileUpdater.activate();
-		//this.systemStatusHandler.post(this.systemStatusUpdater); 
 	}
 
 	@Override

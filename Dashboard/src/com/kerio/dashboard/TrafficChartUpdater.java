@@ -20,9 +20,8 @@ public class TrafficChartUpdater extends TileUpdater {
 	String chartId;
 	
 	public TrafficChartUpdater(Handler handler, ApiClient client, String chartId) {
-		super(handler, client);
+		super(handler, client, "TrafficStatistics.getHistogramInc");
 		this.chartId = chartId;
-		this.method = "TrafficStatistics.getHistogramInc";
 	}
 
 	@Override

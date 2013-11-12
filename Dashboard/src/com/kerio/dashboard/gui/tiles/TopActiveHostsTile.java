@@ -11,7 +11,6 @@ import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.TopActiveHostsTileUpdater;
 import com.kerio.dashboard.TopActiveHostsTileUpdater.TopActiveHosts;
 import com.kerio.dashboard.api.ApiClient;
-import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
 
 public class TopActiveHostsTile extends TextTile{
 	private static String DOWNLOAD_PREFIX = "DOWNLOAD";
@@ -52,7 +51,6 @@ public class TopActiveHostsTile extends TextTile{
 		this.topActiveHostsTileHandler = new TopActiveHostsTileHandler(this);
 		this.topActiveHostsTileUpdater = new TopActiveHostsTileUpdater(this.topActiveHostsTileHandler, client); // TODO: make it autolaunchable
 		this.topActiveHostsTileUpdater.activate();
-	//this.systemStatusHandler.post(this.systemStatusUpdater);
 	}
 
 	@Override

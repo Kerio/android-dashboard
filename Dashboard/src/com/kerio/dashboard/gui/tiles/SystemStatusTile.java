@@ -52,7 +52,6 @@ public class SystemStatusTile extends TextTile {
 		this.systemStatusHandler = new SystemStatusHandler(this);
         this.systemStatusUpdater = new SystemStatusUpdater(this.systemStatusHandler, client); // TODO: make it autolaunchable
         this.systemStatusUpdater.activate();
-//        this.systemStatusHandler.post(this.systemStatusUpdater); 
 	}
 	
 	public void onUpdateError(String str) {
@@ -75,7 +74,6 @@ public class SystemStatusTile extends TextTile {
 		
 		this.uptimeRaw = ss.uptimeRaw; 
 
-		// why are these damn values computed on the client?
 		this.data.put("Uptime", ss.uptime);
 		this.data.put("Kerio Control", ss.update);
 		this.data.put("Antivirus", ss.antivirus);

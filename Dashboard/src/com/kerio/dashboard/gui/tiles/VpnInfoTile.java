@@ -50,7 +50,6 @@ public class VpnInfoTile extends TextTile{
 		this.vpnInfoTileHandler = new VpnInfoTileHandler(this);
 	    this.vpnInfoTileUpdater = new VpnInfoTileUpdater(this.vpnInfoTileHandler, client); // TODO: make it autolaunchable
 	    this.vpnInfoTileUpdater.activate();
-	//    this.systemStatusHandler.post(this.systemStatusUpdater); 
 	}
 	
 	@Override

@@ -12,9 +12,10 @@ public abstract class TileUpdater extends PeriodicTask {
 	protected JSONObject arguments;
 	protected ApiClient client;
 	
-	public TileUpdater(Handler handler, ApiClient client) {
+	public TileUpdater(Handler handler, ApiClient client, String method) {
 		super(handler);
 		this.client = client;
+		this.method = method;
 	}
 	
 	protected abstract boolean initializeArguments();

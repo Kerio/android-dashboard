@@ -67,7 +67,6 @@ public class Config {
 				JSONObject serverJson = serverConfig.toJsonObject();
 				serverJsonArr.put(serverJson);
 			} catch (JSONException e) {
-				//TODO damn ! This is product of hackathon, ignore this situation.
 				Log.e("Config", e.getMessage());
 				continue;
 			}

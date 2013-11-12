@@ -28,21 +28,11 @@ abstract public class PeriodicTask implements Runnable
 					try{
 						Thread thread = new Thread(job);
 						thread.start();
-						//thread.join();
 					}catch(Exception e){
 						System.out.println(e.toString());
 					}
 				}
 			});
-			//Thread thread = new Thread(this.job);
-			//thread.start();
-
-			// TODO: Remove when multithreadded HTTP problem will be solved 
-			//try {
-				//thread.join();
-			//}
-			//catch (Exception e)
-			//{}
 		}
 		
 		public void reschedule() {
