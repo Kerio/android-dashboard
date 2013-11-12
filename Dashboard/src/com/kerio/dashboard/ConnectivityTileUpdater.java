@@ -5,11 +5,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.kerio.dashboard.api.ApiClient;
 
 public class ConnectivityTileUpdater extends PeriodicTask{
 	
+	private static final String UNITS = "units";
 	JSONObject interfaces;
 	
 	public class Connectivity {
@@ -67,6 +69,18 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 		}
 	}
 	
+	private enum DataRate {
+		Bytes("B/s"),
+		KiloBytes("KB/s"),
+		MegaBytes("MB/s"),
+		GigaBytes("GB/s"),
+		Unknown("Unknown");
+		
+		private String units;
+		DataRate(String units) { this.units = units; }
+		String getUnits() { return this.units; }
+	}
+	
 	private String trafficData(String id){
 		double in = 0;
 		double out = 0;
@@ -94,25 +108,20 @@ public class ConnectivityTileUpdater extends PeriodicTask{
 				in = recentTraffic.getDouble("inbound");
 				out = recentTraffic.getDouble("outbound");
 				
-				
-				if(hist.getString("units").equals("Bytes")){
-					unit = "B/s";
-				}else if(hist.getString("units").equals("KiloBytes")){
-					unit = "KB/s";
-				}else if(hist.getString("units").equals("MegaBytes")){
-					if(in > 10){
-						unit = "MB/s";
-					}else{//Until the speed is more then 10MB/s I want to show it in KB/s
-						unit = "KB/s";
-						in = in*1024;
-						out = out*1024;
-					}
-				}else if(hist.getString("units").equals("GigaBytes")){
-					unit = "GB/s";
-				}else{
-					unit = "Unknown";
+				DataRate rate = DataRate.Unknown;
+				try{
+					rate = DataRate.valueOf(hist.getString(UNITS));
+				}catch(IllegalArgumentException iae) {
+					Log.d("ConnectivityTileUpdater.trafficData()", "Illegal argument '" + hist.getString(UNITS) + "' passed to ConnectivityTileUpdater.", iae);	
 				}
 				
+				if (rate == DataRate.MegaBytes && in <= 10) {//Until the speed is more then 10MB/s I want to show it in KB/s
+					unit = DataRate.KiloBytes.getUnits();
+					in = in * 1024;
+					out = out * 1024;
+				}else{
+					unit = rate.getUnits();
+				}			
 				
 			}catch(JSONException e){
 				this.notify("Unable to handle traffic data response");
