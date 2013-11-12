@@ -3,6 +3,8 @@ package com.kerio.dashboard;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,6 +12,7 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.util.Log;
 
 import com.kerio.dashboard.api.ApiClient;
 
@@ -27,7 +30,7 @@ public class LicenseTileUpdater extends PeriodicTask{
 		public String webfilter;
 	}
 	
-protected ApiClient client;
+	protected ApiClient client;
 
 	JSONObject infoResult;
 	JSONObject devices;
@@ -152,23 +155,28 @@ protected ApiClient client;
 		try{
 			JSONObject productInfo = object.getJSONObject("productInfo");
 			String controlVersion = productInfo.getString("versionString");
-			String temp[] = controlVersion.split(" ");
-			String version = temp[0];
-			version = version.replace('.', ','); //I dont know why but split(".") did not work, so I had to do this replace
-			temp = version.split(",");
-			int i1 = Integer.valueOf(temp[0]);
-			int i2 = Integer.valueOf(temp[1]);
-			
-			if(i1 >= 8 && i2 >=2){ //new API call is applied when version is equal or higher then 8.2.0
-				return true;
-			}else{
-				return false;
+
+				
+			Pattern versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)\\s+.*");
+			Matcher versionMatcher = versionPattern.matcher(controlVersion);
+			if(versionMatcher.find()){
+				int major = Integer.valueOf(versionMatcher.group(1));
+				int minor = Integer.valueOf(versionMatcher.group(2));
+				if(major >= 8 && minor >=2){ //new API call is applied when version is equal or higher then 8.2.0
+					return true;
+				}
 			}
-		}catch(Exception e){
-			e.printStackTrace();
+		}catch(JSONException e){
+			Log.d("LicenseTileUpdater.newVersion()", "Invalid data from server", e);
+			this.notify("Unable to handle system Information");
+			return true;
+		}catch(NumberFormatException nfe){
+			Log.d("LicenseTileUpdater.newVersion()", "Invalid version string", nfe);
 			this.notify("Unable to handle system Information");
 			return true;
 		}
+		
+		return false;
 	}
 	
 	private boolean sendRequests(){
