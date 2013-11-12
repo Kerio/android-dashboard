@@ -61,7 +61,7 @@ public class VpnInfoTileUpdater extends PeriodicTask{
 					if((iface.getString("type").equals("VpnTunnel")) && (!iface.getString("id").equals("VpnServer"))){
 						vi.tunnels[j][0] = iface.getString("name");
 						if (iface.getBoolean("enabled")) {
-							vi.tunnels[j][1] = "Disabled";
+							vi.tunnels[j][1] = "Enabled";
 						}
 						else {
 							vi.tunnels[j][1] = iface.getString("linkStatus");	
