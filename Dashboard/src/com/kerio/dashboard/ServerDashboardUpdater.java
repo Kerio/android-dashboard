@@ -25,6 +25,8 @@ public class ServerDashboardUpdater extends PeriodicTask {
 	
 	@Override
 	public void execute() {
+		boolean emptyDashboard = true;
+		
 		notify("UpdateStarted");
  		if ( ! this.client.login(this.config.username, this.config.password)) {
  			this.notify("Unable to connect: " + this.client.getLastError());
@@ -47,6 +49,9 @@ public class ServerDashboardUpdater extends PeriodicTask {
 
 			for (int i = 0; i < columns.length(); i++) {
 				JSONArray column = columns.getJSONArray(i);
+				if(!column.isNull(0)){
+					emptyDashboard = false;
+				}
 				for (int j = 0; j < column.length(); j++) {
 					JSONObject item = column.getJSONObject(j);
 					if(item.getString("type").equals("tileTrafficChart")){
@@ -56,6 +61,12 @@ public class ServerDashboardUpdater extends PeriodicTask {
 						tiles.put(item.getString("type"), item.optJSONObject("custom"));
 					}
 				}
+			}
+			if(emptyDashboard){
+				//If the Dashboard is empty, add Default tiles
+				tiles.put("tileSystemHealth", null);
+				tiles.put("tileSystem", null);
+				tiles.put("tileSystemStatus", null);
 			}
 
 		} catch (JSONException e) {
