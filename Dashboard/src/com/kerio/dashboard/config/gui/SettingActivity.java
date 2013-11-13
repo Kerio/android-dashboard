@@ -4,19 +4,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.kerio.dashboard.ApiUtils;
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.config.Config;
 import com.kerio.dashboard.config.ServerConfig;
+
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceCategory;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 
 public class SettingActivity extends PreferenceActivity implements OnPreferenceChangeListener {
 	
+
 	private ServerConfigDialog addFirewallDialog;
 	private PreferenceCategory firewallsCategoryComponent;
 	private Config configAll;
@@ -38,6 +45,7 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
         firewallsCategoryComponent = (PreferenceCategory) findPreference("group_prefFirewallList");
         updateFirewalls();
  
+        setUpActionBar();
     }
 	
 	private void updateFirewalls() {
@@ -119,5 +127,28 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 		
 		return false;
 	}
+	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void setUpActionBar() {
+		ApiUtils.setUpActionBar(getActionBar());
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+		    	try {
+		    		NavUtils.navigateUpFromSameTask(this);
+		    	}
+		    	catch (NoClassDefFoundError e) {
+		    		/* NavUtils class hasn't been found */
+		    	}
+	        
+		    	return true;
+	    }
+	
+		return super.onOptionsItemSelected(item);
+	}
+
     
 }

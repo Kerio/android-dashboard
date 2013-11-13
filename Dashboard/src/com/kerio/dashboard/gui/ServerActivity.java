@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import com.kerio.dashboard.ApiUtils;
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerDashboardUpdater;
 import com.kerio.dashboard.api.ApiClient;
@@ -22,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.NavUtils;
@@ -212,20 +214,8 @@ public class ServerActivity extends Activity {
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	protected void setUpActionBar() {
-		// Make sure if the NavUtils are available (from Android-support api)
-		boolean NavUtilsIsAvailable = true;
-		try {
-			Class.forName("android.support.v4.app.NavUtils");
-		}
-		catch (ClassNotFoundException e) {
-			NavUtilsIsAvailable = false;
-		}
-		
-	    // Make sure we're running on Honeycomb or higher to use ActionBar APIs
-	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && NavUtilsIsAvailable) {
-	        getActionBar().setDisplayHomeAsUpEnabled(true);
-	    }
+	private void setUpActionBar() {
+		ApiUtils.setUpActionBar(getActionBar());
 	}
 	
 	@Override
