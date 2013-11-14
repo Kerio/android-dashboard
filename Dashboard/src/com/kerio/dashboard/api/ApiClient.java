@@ -237,17 +237,7 @@ public class ApiClient{
 	
 	private HttpClient sslClient(HttpClient client) {
 	    try {
-	        X509TrustManager tm = new X509TrustManager() { 
-	            public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
-	            }
-
-	            public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
-	            }
-
-	            public X509Certificate[] getAcceptedIssuers() {
-	                return null;
-	            }
-	        };
+	        X509TrustManager tm = new LocalTrustManagement();
 	        SSLContext ctx = SSLContext.getInstance("TLS");
 	        ctx.init(null, new TrustManager[]{tm}, null);
 	        SSLSocketFactory ssf = new MySSLSocketFactory(ctx);
@@ -267,17 +257,7 @@ public class ApiClient{
 	     public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
 	         super(truststore);
 
-	         TrustManager tm = new X509TrustManager() {
-	             public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-	             }
-
-	             public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-	             }
-
-	             public X509Certificate[] getAcceptedIssuers() {
-	                 return null;
-	             }
-	         };
+	         TrustManager tm = new LocalTrustManagement();
 
 	         sslContext.init(null, new TrustManager[] { tm }, null);
 	     }

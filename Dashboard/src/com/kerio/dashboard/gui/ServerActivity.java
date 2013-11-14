@@ -48,7 +48,7 @@ public class ServerActivity extends Activity {
 		public ServerDashboardHandler(ServerActivity activity, ApiClient client) {
 			this.activity = activity;
 			this.tileFactory = new TileFactory(activity, client);
-			this.tiles = new HashMap<String, Tile>();
+			this.tiles = new HashMap<String, Tile>(); 
 		}
 
 		@SuppressWarnings("unchecked")
@@ -91,9 +91,7 @@ public class ServerActivity extends Activity {
 			existingTile = this.tileFactory.create(tileType, tileConfig);
 			
 			if (existingTile != null) {
-				if ( ! existingTile.isReady()) {
-					existingTile.setFinalHandler(dashboardSettingsHandler);
-				}
+				existingTile.setFinalHandler(dashboardSettingsHandler);
 				this.activity.addTile(existingTile);
 			}
 			
@@ -148,7 +146,7 @@ public class ServerActivity extends Activity {
 	{
 		this.loading.setVisibility(View.VISIBLE);
 	}
-
+	
 	public void onUpdateDone()
 	{
 		this.loading.setVisibility(View.GONE);
@@ -194,13 +192,16 @@ public class ServerActivity extends Activity {
 
         // Notifications tile should be present always
         this.notifications = new NotificationTile(this, apiClient);
+        
+		this.dashboardSettingsHandler = new ServerDashboardHandler(this, apiClient);
+		this.notifications.setFinalHandler(this.dashboardSettingsHandler);
+		
         this.notifications.setVisibility(View.GONE); //was GONE
         
         this.dashboard.addView(this.notifications);
         
-		this.dashboardSettingsHandler = new ServerDashboardHandler(this, apiClient);
-		this.notifications.setFinalHandler(this.dashboardSettingsHandler);
         this.dashboardUpdater = new ServerDashboardUpdater(this.dashboardSettingsHandler, apiClient, config); // TODO: make it autolaunchable
+		this.dashboardUpdater.activate();
        
 		loadingSetText(getString(R.string.connectingText));
 		if (0 != config.description.length()) {

@@ -2,6 +2,7 @@ package com.kerio.dashboard.gui.tiles;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;
+import java.util.Map;
 
 
 import com.kerio.dashboard.NotificationUpdater;
@@ -12,6 +13,7 @@ import com.kerio.dashboard.api.NotificationGetter.Notification;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,7 +32,7 @@ public class NotificationTile extends Tile {
 
 		@Override
         public void handleMsg(Message msg) {
-			if (msg.obj instanceof HashMap<?, ?>) {
+			if (msg.obj instanceof Map<?, ?>) {
 				this.tile.setData(msg.obj);
 			}
 			else if (msg.obj instanceof String) {
@@ -43,7 +45,7 @@ public class NotificationTile extends Tile {
 	
 	private NotificationHandler notificationHandler;
 	private NotificationUpdater notificationUpdater;
-	private HashMap<String, View> notificationsMap;
+	private Map<String, View> notificationsMap;
 
 	public NotificationTile(Context context, ApiClient client) {
 		super(context, client);
@@ -138,14 +140,17 @@ public class NotificationTile extends Tile {
 	
 	@Override
 	public void setData(Object data) {
-		if (!(data instanceof HashMap<?, ?>)) {
+		if(data == null) {
+			Log.d("NotificationTile.setData()", "Provided data is null.");
+		}
+		if (!(data instanceof Map<?, ?>)) {
 			throw new InvalidParameterException("HashMap<String, Notification> expected");
 		}
 		
 		@SuppressWarnings("unchecked")
-		HashMap<String, Notification> allNotifications = (HashMap<String, Notification>)data;
+		Map<String, Notification> allNotifications = (Map<String, Notification>)data;
 		
-		HashMap<String, View> newNotifications = new HashMap<String, View>();
+		Map<String, View> newNotifications = new HashMap<String, View>();
 		
 		for (String key : allNotifications.keySet()) {
 			
