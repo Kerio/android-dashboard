@@ -15,9 +15,9 @@ public class NotificationGetter {
 	private HashMap<String, Notification> knownNotifications;
 
 	public enum NotificationType {
-		Info,
 		Error,
-		Warning
+		Warning,
+		Info
 	};
 
 	public class Notification
