@@ -4,6 +4,7 @@ import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerStatusUpdater;
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.api.NotificationGetter.Notification;
+import com.kerio.dashboard.api.NotificationGetter.NotificationType;
 import com.kerio.dashboard.config.ServerConfig;
 
 import android.content.Context;
@@ -77,8 +78,12 @@ public class ServerTile extends Tile {
 			return;
 		}
 		
-		for (Notification n : status.notifications.values()) {
-			displayNotes(n.title);
+		for (NotificationType type : NotificationType.values()) {
+			for (Notification n : status.notifications.values()) {
+				if(n.type == type){
+					displayNotes(n.title);
+				}
+			}	
 		}
 	}
 	
