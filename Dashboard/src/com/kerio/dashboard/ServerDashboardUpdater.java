@@ -3,6 +3,8 @@ package com.kerio.dashboard;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,10 +30,17 @@ public class ServerDashboardUpdater extends PeriodicTask {
 		boolean emptyDashboard = true;
 		
 		notify("UpdateStarted");
- 		if ( ! this.client.login(this.config.username, this.config.password)) {
+		boolean connected = false;
+		try{
+			connected = this.client.login(this.config.username, this.config.password);
+ 		}catch(SSLHandshakeException se){
+ 			connected = false;
+ 		}
+		
+		if( ! connected){
  			this.notify("Unable to connect: " + this.client.getLastError());
  			return;
- 		}
+		}
 
 		JSONObject settings = this.client.exec("Session.getSettings", null);
 		if (settings == null) {

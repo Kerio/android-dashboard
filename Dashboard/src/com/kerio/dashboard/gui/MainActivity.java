@@ -1,5 +1,16 @@
 package com.kerio.dashboard.gui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,18 +19,27 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerStatusUpdater;
+import com.kerio.dashboard.api.TrustStoreHelper;
 import com.kerio.dashboard.config.Config;
 import com.kerio.dashboard.config.ServerConfig;
 import com.kerio.dashboard.config.gui.SettingActivity;
 import com.kerio.dashboard.gui.tiles.ServerTile;
+import com.kerio.dashboard.gui.tiles.ServerTile.State;
+
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.security.KeyChain;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
@@ -32,6 +52,7 @@ import android.widget.LinearLayout.LayoutParams;
 public class MainActivity extends Activity {
 
 	private static final int RESULT_SETTINGS = 1;
+	private static final int INSTALL_KEYCHAIN_CODE = 2;
 	
 	@SuppressWarnings("unused")
 	private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
@@ -40,6 +61,8 @@ public class MainActivity extends Activity {
 	private ServerStatusUpdater serverStatusUpdater;
 	private LinearLayout layout = null;
 	private TextView notifyText = null;
+	
+	private TrustStoreHelper trustHelper = null;
 
 	private class ServerStatusHandler extends Handler {
 
@@ -112,8 +135,10 @@ public class MainActivity extends Activity {
         	public void onClick(View v) {
     			meTile.touchFeedback();
     			
-        		if (ServerTile.State.Ok == meTile.tileStatus) {	
+        		if (meTile.tileStatus == ServerTile.State.Ok){	
         			me.showDashboard(server);
+        		}else if(meTile.tileStatus == State.CertWarning){
+        			me.showCertWarning(server);
         		}
         	}
         };
@@ -146,6 +171,15 @@ public class MainActivity extends Activity {
     	startActivity(myIntent);
     }
     
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB) //TODO CIMA propagate this condition higher
+	private void showCertWarning(ServerConfig server) {
+    	X509Certificate certChain[] = server.getCertChain();
+    	CertificateWarningDialog dialog = new CertificateWarningDialog();
+    	dialog.setCertChain(certChain);
+    	dialog.setTrustHelper(this.trustHelper);
+    	dialog.show(getFragmentManager(), "CertificateWarningDialog");
+    }
+    
     // Different event handlers
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,9 +201,19 @@ public class MainActivity extends Activity {
 		
 		this.statusHandler = new ServerStatusHandler(this);
 		
-		this.serverStatusUpdater = new ServerStatusUpdater(this.statusHandler, settings);
+		if(this.trustHelper == null){
+			this.trustHelper = new TrustStoreHelper(this);
+		}
+		
+		this.serverStatusUpdater = new ServerStatusUpdater(this.statusHandler, settings, this.trustHelper.getKeystore());
 		this.serverStatusUpdater.activate();
     }
+	
+	@Override
+	protected void onDestroy() {
+		this.trustHelper.store();
+		super.onDestroy();
+	}
 	
 	@Override
 	protected void onResume() {
@@ -207,8 +251,15 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
  
         switch (requestCode) {
-        case RESULT_SETTINGS:
-            break;
+	        case RESULT_SETTINGS:
+	            break;
+	        case INSTALL_KEYCHAIN_CODE:
+	        	if(resultCode == RESULT_OK){
+	        		Log.d("MainActivity.onActivityResult", "Certificate successfully installed.");
+	        	}else{
+	        		Log.d("MainActivity.onActivityResult", "Certificate not installed.");
+	        	}
+	        	break;
         }
     }
 }

@@ -10,11 +10,10 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -28,6 +27,8 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.scheme.SocketFactory;
+import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -41,16 +42,30 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.kerio.dashboard.config.ServerConfig;
 import com.kerio.dashboard.gui.tiles.TextTile.Pairs;
 
 import android.util.Log;
 
 public class ApiClient{
-	LinkedHashMap<String, JSONObject> response = null;
 	
-	public ApiClient(String server) {
-		this.server = server;
-		this.port = 0;
+	static LocalTrustManagement localTrustManagement = null;
+	
+	LinkedHashMap<String, JSONObject> response = null;
+	private ServerConfig config;
+
+	private int port;
+	private String token;
+	private String error;
+	private HttpClient httpClient;
+	
+	public ApiClient(String server, ServerConfig serverConfig, KeyStore trustStore) {
+		this(server, serverConfig, trustStore, 0);
+	}
+	
+	public ApiClient(String server, ServerConfig serverConfig, KeyStore trustStore, int port) {
+		this.config = serverConfig;
+		this.port = port;
 		
 		HttpParams params = new BasicHttpParams();
 	    params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
@@ -64,16 +79,10 @@ public class ApiClient{
 	    schReg.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 	    ClientConnectionManager conMgr = new ThreadSafeClientConnManager(params, schReg);
 
-	    httpClient = sslClient(new DefaultHttpClient(conMgr, params));
+	    httpClient = getSslClient(new DefaultHttpClient(conMgr, params), serverConfig, trustStore);
 	}
 	
-	public ApiClient(String server, int port) {
-		this.server = server;
-		this.port = port;
-		httpClient = new DefaultHttpClient();
-	}
-	
-	public boolean login(String username, String password) {
+	public boolean login(String username, String password) throws SSLHandshakeException {
 		JSONObject params = new JSONObject();
 		JSONObject app = new JSONObject();
 		try {
@@ -87,7 +96,7 @@ public class ApiClient{
 			return false;
 		}
 		
-		JSONObject ret = exec("Session.login", params);
+		JSONObject ret = execSafe("Session.login", params);
 		
 		if (ret == null) {
 			return false;
@@ -104,6 +113,15 @@ public class ApiClient{
 	}
 	
 	public JSONObject exec(String method, JSONObject arguments) {
+		try {
+			return execSafe(method, arguments);
+		}catch(SSLHandshakeException se) {
+			Log.d("ApiClient.exec()", "Certificate problem occured", se);
+		}
+		return null;
+	}
+	
+	public JSONObject execSafe(String method, JSONObject arguments) throws SSLHandshakeException {
 		error = "";
 		JSONObject data = new JSONObject();
 		try {
@@ -133,6 +151,8 @@ public class ApiClient{
 		    }
 		    
 		    error = "Invalid response from server: " + status.toString();	
+		}catch(SSLHandshakeException se){
+			throw se;
 		} catch (Exception e) {
 			error = e.toString();
 		}
@@ -217,7 +237,7 @@ public class ApiClient{
 	}
 	
 	private String getUrl() {
-		return "https://" + server + ":" + (port == 0 ? "4081" : Integer.toString(port)) + "/admin/api/jsonrpc/";
+		return "https://" + this.config.server + ":" + (port == 0 ? "4081" : Integer.toString(port)) + "/admin/api/jsonrpc/";
 	}
 	
 	private JSONObject processEntity(HttpEntity entity) throws IllegalStateException, IOException, JSONException {
@@ -228,53 +248,24 @@ public class ApiClient{
 		
 		return new JSONObject(result);
 	}
+
 	
-	private String server;
-	private int port;
-	private String token;
-	private String error;
-	private HttpClient httpClient;
-	
-	private HttpClient sslClient(HttpClient client) {
+	private HttpClient getSslClient(HttpClient client, ServerConfig serverConfig, KeyStore trustStore){
 	    try {
-	        X509TrustManager tm = new LocalTrustManagement();
-	        SSLContext ctx = SSLContext.getInstance("TLS");
-	        ctx.init(null, new TrustManager[]{tm}, null);
-	        SSLSocketFactory ssf = new MySSLSocketFactory(ctx);
-	        ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+	        
+	        SSLSocketFactory ssf =  new TrustSSLSocketFactory(trustStore, serverConfig);
+	        ssf.setHostnameVerifier(new BrowserCompatHostnameVerifier()); //TODO CIMA
+	        
 	        ClientConnectionManager ccm = client.getConnectionManager();
+	        
+
 	        SchemeRegistry sr = ccm.getSchemeRegistry();
-	        sr.register(new Scheme("https", ssf, 4081));
+	        sr.register(new Scheme("https", (SocketFactory) ssf, 4081));
+
+	        
 	        return new DefaultHttpClient(ccm, client.getParams());
 	    } catch (Exception ex) {
-	        return null;
+	        return null;//TODO CIMA
 	    }
-	}
-	
-	public class MySSLSocketFactory extends SSLSocketFactory {
-	     SSLContext sslContext = SSLContext.getInstance("TLS");
-
-	     public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
-	         super(truststore);
-
-	         TrustManager tm = new LocalTrustManagement();
-
-	         sslContext.init(null, new TrustManager[] { tm }, null);
-	     }
-
-	     public MySSLSocketFactory(SSLContext context) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
-	        super(null);
-	        sslContext = context;
-	     }
-
-	     @Override
-	     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
-	         return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
-	     }
-
-	     @Override
-	     public Socket createSocket() throws IOException {
-	         return sslContext.getSocketFactory().createSocket();
-	     }
 	}
 }

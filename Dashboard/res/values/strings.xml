@@ -37,5 +37,15 @@
     <string name="note_ok">Working properly</string>
     <string name="connectingText">Connecting to server...</string>
     
+    <string name="cert_Warning_header">Certificate warning</string>
+    <string name="cert_Warning_body">Certificate provided by the remote server is either invalid or untrusted. Please see the certificate and decide whether to add exception fot this certificate.</string>
+    <string name="cert_Warning_trust">Trust</string>
+    <string name="cert_Warning_reject">Reject</string>
+    
+    <string name="cert_dn">DN</string>
+    <string name="cert_issuerDn">Issuer DN</string>
+    <string name="cert_type">Type</string>
+    <string name="cert_issuer">Issuer</string>
+    
     
 </resources>

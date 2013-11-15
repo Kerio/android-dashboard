@@ -1,5 +1,7 @@
 package com.kerio.dashboard.config;
 
+import java.security.cert.X509Certificate;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,6 +22,8 @@ public class ServerConfig implements Comparable<ServerConfig> {
 	
 	public String username;
 	public String password;
+	
+	private X509Certificate[] certChain = null;
 	
 	void fromJsonObject(JSONObject serverJson) throws JSONException {
 		this.id = serverJson.getInt(KEY_ID);
@@ -67,6 +71,14 @@ public class ServerConfig implements Comparable<ServerConfig> {
 	@Override
 	public int compareTo(ServerConfig another) {
 		return this.id - another.id;
+	}
+
+	public X509Certificate[] getCertChain() {
+		return certChain;
+	}
+
+	public void setCertChain(X509Certificate[] certChain) {
+		this.certChain = certChain;
 	}
 	
 }

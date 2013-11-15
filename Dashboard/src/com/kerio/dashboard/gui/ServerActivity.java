@@ -12,6 +12,7 @@ import com.kerio.dashboard.ApiUtils;
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerDashboardUpdater;
 import com.kerio.dashboard.api.ApiClient;
+import com.kerio.dashboard.api.TrustStoreHelper;
 import com.kerio.dashboard.config.ServerConfig;
 import com.kerio.dashboard.config.gui.SettingActivity;
 import com.kerio.dashboard.gui.tiles.NotificationTile;
@@ -138,6 +139,7 @@ public class ServerActivity extends Activity {
 	
 	private ServerDashboardHandler dashboardSettingsHandler;
 	private ServerDashboardUpdater dashboardUpdater;
+	private TrustStoreHelper trustHelper = null;
 	private LinearLayout dashboard;
 	private LinearLayout loading; // initial loading indicator
 	private NotificationTile notifications; // Notifications tile
@@ -188,7 +190,11 @@ public class ServerActivity extends Activity {
     	this.dashboard.setVisibility(View.GONE);
         this.loading = (LinearLayout)findViewById(R.id.loading);
         
-        ApiClient apiClient = new ApiClient(config.server);
+        if(this.trustHelper == null){
+        	this.trustHelper = new TrustStoreHelper(this);
+        }
+        
+        ApiClient apiClient = new ApiClient(config.server, config, this.trustHelper.getKeystore());
 
         // Notifications tile should be present always
         this.notifications = new NotificationTile(this, apiClient);
@@ -196,7 +202,7 @@ public class ServerActivity extends Activity {
 		this.dashboardSettingsHandler = new ServerDashboardHandler(this, apiClient);
 		this.notifications.setFinalHandler(this.dashboardSettingsHandler);
 		
-        this.notifications.setVisibility(View.GONE); //was GONE
+        this.notifications.setVisibility(View.GONE); 
         
         this.dashboard.addView(this.notifications);
         
@@ -214,6 +220,12 @@ public class ServerActivity extends Activity {
 		setUpActionBar();
 	}
 
+	@Override
+	protected void onDestroy() {
+		this.trustHelper.store();
+		super.onDestroy();
+	}
+	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setUpActionBar() {
 		ApiUtils.setUpActionBar(getActionBar());

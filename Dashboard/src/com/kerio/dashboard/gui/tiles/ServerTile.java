@@ -1,12 +1,16 @@
 package com.kerio.dashboard.gui.tiles;
 
+import java.security.cert.X509Certificate;
+
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerStatusUpdater;
+import com.kerio.dashboard.ServerStatusUpdater.ConnectionState;
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.api.NotificationGetter.Notification;
 import com.kerio.dashboard.api.NotificationGetter.NotificationType;
 import com.kerio.dashboard.config.ServerConfig;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
@@ -23,7 +27,7 @@ import android.widget.TextView;
 
 public class ServerTile extends Tile {
 	public static enum State {
-		Ok, Error, Warning, Unknown
+		Ok, Error, Warning, CertWarning, Unknown
 	}
 
 	private LinearLayout holder;
@@ -36,6 +40,7 @@ public class ServerTile extends Tile {
 	private ImageView appIcon;
 	private LinearLayout border;
 	public State tileStatus;
+	public X509Certificate certificate;
 	
 	private ServerConfig.ServerType type = ServerConfig.ServerType.CONTROL;
 	
@@ -61,12 +66,20 @@ public class ServerTile extends Tile {
 		ServerStatusUpdater.ServerStatus status = (ServerStatusUpdater.ServerStatus)data;
 		this.setConfig(status.getConfig());
 		
-        if ( ! status.connected) {
+        switch(status.connected) {
+        case Error:
         	displayNotes("Unable to connect to the server or authorization failed");
 			setState(State.Error);
 			return;
+			
+        case CertificateError:
+        	displayNotes("Server certificate is invalid or untrusted");
+			setState(State.CertWarning);
+			return;
+			
+        case Connected:
+        	setState(State.Ok);
         }
-    	setState(State.Ok);
         
     	if ((status.notifications == null) || status.notifications.isEmpty()) {
     		this.notes.setText(R.string.note_ok);
@@ -113,6 +126,7 @@ public class ServerTile extends Tile {
 			this.border.setBackgroundColor(0xFFfa3431);
 			break;
 		case Warning:
+		case CertWarning:
 			this.icon.setImageResource(android.R.drawable.stat_sys_warning);
 			this.icon.setVisibility(View.VISIBLE);
 			this.progress.setVisibility(View.GONE);
@@ -256,7 +270,7 @@ public class ServerTile extends Tile {
 		drawable.setOneShot(true);
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-		    this.frame.setBackground(drawable);
+			setBackgroudNew(drawable);
 		} 
 		else {
 		    this.frame.setBackgroundDrawable(drawable);
@@ -269,6 +283,12 @@ public class ServerTile extends Tile {
 		    }
 		}, 100);
 	}
+	
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	private void setBackgroudNew(AnimationDrawable drawable){
+		this.frame.setBackground(drawable);
+	}
+	
 	
 	@Override
 	public void activate() {
