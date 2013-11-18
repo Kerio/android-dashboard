@@ -14,6 +14,7 @@ import com.kerio.dashboard.ServerDashboardUpdater;
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.api.TrustStoreHelper;
 import com.kerio.dashboard.config.ServerConfig;
+import com.kerio.dashboard.config.gui.CertificateStoreActivity;
 import com.kerio.dashboard.config.gui.SettingActivity;
 import com.kerio.dashboard.gui.tiles.NotificationTile;
 import com.kerio.dashboard.gui.tiles.Tile;
@@ -39,6 +40,7 @@ public class ServerActivity extends Activity {
 
 	private List<Tile> tiles = null;
 	private static final int RESULT_SETTINGS = 1;
+	private static final int RESULT_CERTIFICATE = 1;
 	
 	private class ServerDashboardHandler extends Handler {
 
@@ -270,6 +272,12 @@ public class ServerActivity extends Activity {
             Intent intent = new Intent(this, SettingActivity.class);
             startActivityForResult(intent, RESULT_SETTINGS);
             break;
+            
+        case R.id.action_certificates:
+            intent = new Intent(this, CertificateStoreActivity.class);
+            startActivityForResult(intent, RESULT_CERTIFICATE);
+            break;
+            
         case android.R.id.home:
         	try {
         		NavUtils.navigateUpFromSameTask(this);

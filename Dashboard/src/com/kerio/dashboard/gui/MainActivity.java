@@ -22,6 +22,7 @@ import com.kerio.dashboard.ServerStatusUpdater;
 import com.kerio.dashboard.api.TrustStoreHelper;
 import com.kerio.dashboard.config.Config;
 import com.kerio.dashboard.config.ServerConfig;
+import com.kerio.dashboard.config.gui.CertificateStoreActivity;
 import com.kerio.dashboard.config.gui.SettingActivity;
 import com.kerio.dashboard.gui.tiles.ServerTile;
 import com.kerio.dashboard.gui.tiles.ServerTile.State;
@@ -52,7 +53,7 @@ import android.widget.LinearLayout.LayoutParams;
 public class MainActivity extends Activity {
 
 	private static final int RESULT_SETTINGS = 1;
-	private static final int INSTALL_KEYCHAIN_CODE = 2;
+	private static final int RESULT_CERTIFICATE = 2;
 	
 	@SuppressWarnings("unused")
 	private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
@@ -235,12 +236,16 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-        case R.id.action_settings:
-            Intent intent = new Intent(this, SettingActivity.class);
-            startActivityForResult(intent, RESULT_SETTINGS);
-            break;
+    	Intent intent = null;
+    	switch (item.getItemId()) {      
+	        case R.id.action_settings:
+	            intent = new Intent(this, SettingActivity.class);
+	            startActivityForResult(intent, RESULT_SETTINGS);
+	            break;
+	        case R.id.action_certificates:
+	            intent = new Intent(this, CertificateStoreActivity.class);
+	            startActivityForResult(intent, RESULT_CERTIFICATE);
+	            break;
         }
 
         return true;
@@ -253,13 +258,6 @@ public class MainActivity extends Activity {
         switch (requestCode) {
 	        case RESULT_SETTINGS:
 	            break;
-	        case INSTALL_KEYCHAIN_CODE:
-	        	if(resultCode == RESULT_OK){
-	        		Log.d("MainActivity.onActivityResult", "Certificate successfully installed.");
-	        	}else{
-	        		Log.d("MainActivity.onActivityResult", "Certificate not installed.");
-	        	}
-	        	break;
         }
     }
 }
