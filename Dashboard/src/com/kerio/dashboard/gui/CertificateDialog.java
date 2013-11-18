@@ -3,6 +3,7 @@ package com.kerio.dashboard.gui;
 import java.security.cert.X509Certificate;
 
 import com.kerio.dashboard.R;
+import com.kerio.dashboard.ServerStatusUpdater.ServerStatus;
 import com.kerio.dashboard.api.TrustStoreHelper;
 import com.kerio.dashboard.gui.tiles.CertificateTile;
 

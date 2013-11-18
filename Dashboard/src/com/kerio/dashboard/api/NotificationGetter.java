@@ -77,7 +77,7 @@ public class NotificationGetter {
 		JSONObject arguments = new JSONObject();
 		try {
 			arguments.put("lastNotifications", this.fakeNotification);
-			arguments.put("timeout", 1);
+			arguments.put("timeout", 0);
 		} catch (JSONException e) {
 			return result;
 		}
@@ -122,7 +122,7 @@ public class NotificationGetter {
 		}
 		Notification notification = this.knownNotifications.get(type);
 
-		if (!value.isEmpty()) {
+		if (value.length() != 0) {
 			notification.description = notification.description.replace("%1", value);
 		}
 		return notification;

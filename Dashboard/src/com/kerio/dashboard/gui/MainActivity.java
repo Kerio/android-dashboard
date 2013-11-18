@@ -1,21 +1,32 @@
 package com.kerio.dashboard.gui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerStatusUpdater;
@@ -26,29 +37,6 @@ import com.kerio.dashboard.config.gui.CertificateStoreActivity;
 import com.kerio.dashboard.config.gui.SettingActivity;
 import com.kerio.dashboard.gui.tiles.ServerTile;
 import com.kerio.dashboard.gui.tiles.ServerTile.State;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Typeface;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.security.KeyChain;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.View;
-import android.view.MenuItem;
-import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 public class MainActivity extends Activity {
 
@@ -139,7 +127,7 @@ public class MainActivity extends Activity {
         		if (meTile.tileStatus == ServerTile.State.Ok){	
         			me.showDashboard(server);
         		}else if(meTile.tileStatus == State.CertWarning){
-        			me.showCertWarning(server);
+        			me.showCertWarning(server, meTile.getHandler());
         		}
         	}
         };
@@ -173,15 +161,17 @@ public class MainActivity extends Activity {
     }
     
     @TargetApi(Build.VERSION_CODES.HONEYCOMB) //TODO CIMA propagate this condition higher
-	private void showCertWarning(ServerConfig server) {
+	private void showCertWarning(ServerConfig server, Handler handler) {
     	X509Certificate certChain[] = server.getCertChain();
     	CertificateWarningDialog dialog = new CertificateWarningDialog();
     	dialog.setCertChain(certChain);
+    	dialog.setServerStatus(this.serverStatusUpdater.new ServerStatus(server, handler, this.trustHelper.getKeystore()));
     	dialog.setTrustHelper(this.trustHelper);
+    	
     	dialog.show(getFragmentManager(), "CertificateWarningDialog");
     }
-    
-    // Different event handlers
+
+	// Different event handlers
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

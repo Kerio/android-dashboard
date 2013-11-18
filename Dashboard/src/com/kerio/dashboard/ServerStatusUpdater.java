@@ -58,7 +58,7 @@ public class ServerStatusUpdater extends PeriodicTask {
 		public Map<String, Notification> notifications = null;
 		private KeyStore trustStore;
 		
-		ServerStatus(ServerConfig config, Handler handler, KeyStore trustStore) {
+		public ServerStatus(ServerConfig config, Handler handler, KeyStore trustStore) {
 			this.config = config;
 			this.handler = handler;
 			this.trustStore = trustStore;
