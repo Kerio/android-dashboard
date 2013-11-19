@@ -3,7 +3,6 @@ package com.kerio.dashboard.gui.tiles;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 

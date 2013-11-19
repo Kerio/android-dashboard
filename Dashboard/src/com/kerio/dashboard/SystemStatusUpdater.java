@@ -6,10 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.kerio.dashboard.api.ApiClient;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.util.Log;
+
+import com.kerio.dashboard.api.ApiClient;
 
 public class SystemStatusUpdater extends PeriodicTask {
 

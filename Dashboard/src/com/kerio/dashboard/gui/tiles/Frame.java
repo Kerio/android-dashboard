@@ -1,11 +1,11 @@
 package com.kerio.dashboard.gui.tiles;
 
-import com.kerio.dashboard.api.ApiClient;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.kerio.dashboard.api.ApiClient;
 
 public class Frame extends Tile {
 

@@ -3,21 +3,24 @@ package com.kerio.dashboard.gui.tiles;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-import com.kerio.dashboard.api.ApiClient;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.widget.LinearLayout;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
+import com.kerio.dashboard.api.ApiClient;
+
 public abstract class GraphTile extends Tile {
 
-	// capacity - max amount of values to display
+	/**  
+	 * @param context
+	 * @param capacity max amount of values to display
+	 */
 	public GraphTile(Context context, int capacity) {
-		super(context, (ApiClient)null); //TODO do this without apiclient
+		super(context, (ApiClient)null);
 		this.capacity = capacity;
 
 		this.seriesData = new GraphViewData[this.capacity];

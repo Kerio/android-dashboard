@@ -19,11 +19,11 @@
     <string name="pref_FirewallHost">Host</string>
     <string name="pref_FirewallHost_desc">Hostname or IP address</string>
     <string name="pref_FirewallUsername">Username</string>
-    <string name="pref_FirewallUsername_desc">Administrator Account</string>
+    <string name="pref_FirewallUsername_desc"></string>
     <string name="pref_FirewallPassword">Password</string>
-    <string name="pref_FirewallPassword_desc">passhrase, secret etc.</string>
+    <string name="pref_FirewallPassword_desc"></string>
     <string name="pref_FirewallDescription">Description</string>
-    <string name="pref_FirewallDescription_desc">custom text</string>
+    <string name="pref_FirewallDescription_desc">Custom text</string>
     <string name="pref_DeleteFirewallButton">Delete</string>
     <string name="pref_ApplicationType">Server Type</string>
     <string name="pref_ApplicationType_desc">Select a Kerio Server</string>
@@ -39,6 +39,7 @@
     <string name="note_connecting">Connecting to server...</string>
     <string name="note_ok">Working properly</string>
     <string name="connectingText">Connecting to server...</string>
+    <string name="connectingError">Error occured when connecting to server.</string>
     
     <string name="cert_Warning_header">Certificate warning</string>
     <string name="cert_Warning_body">Certificate provided by the remote server is either invalid or untrusted. Please see the certificate and decide whether to add exception fot this certificate.</string>
@@ -52,6 +53,11 @@
     <string name="cert_issuerDn">Issuer DN</string>
     <string name="cert_type">Type</string>
     <string name="cert_issuer">Issuer</string>
-    
+    <string name="cert_notAfter">Valid not after</string>
+    <string name="cert_notBefore">Valid not before</string>
+    <string name="cert_serial">Serial number</string>
+    <string name="cert_version">Version</string>
+    <string name="cert_sigAlg">Signature algorithm</string>
+    <string name="cert_sigOid">Signature OID</string>
     
 </resources>

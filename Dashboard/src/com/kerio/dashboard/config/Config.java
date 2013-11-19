@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.*;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 public class Config {
@@ -39,7 +39,7 @@ public class Config {
 					serverConfig.fromJsonObject(serverJsonArr.getJSONObject(i));
 				}
 				catch (JSONException e) {
-					//TODO silently ignore, continue with another JSON object
+					//silently ignore, continue with another JSON object
 					Log.e("Config", e.getMessage());
 					continue;
 				}
@@ -47,7 +47,7 @@ public class Config {
 			}
 			
 		} catch (JSONException e) {
-			//TODO silently ignore, return empty config.
+			//silently ignore, return empty config.
 			Log.e("Config", e.getMessage());
 			return new ArrayList<ServerConfig>();
 		}

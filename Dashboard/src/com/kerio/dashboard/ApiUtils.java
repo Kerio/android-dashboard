@@ -1,11 +1,9 @@
 package com.kerio.dashboard;
 
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.os.Build;
 
 public class ApiUtils {
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static void setUpActionBar(ActionBar actionBar) {
 		// Make sure if the NavUtils are available (from Android-support api)
 		boolean NavUtilsIsAvailable = true;

@@ -4,12 +4,6 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
-
-import com.kerio.dashboard.NotificationUpdater;
-import com.kerio.dashboard.R;
-import com.kerio.dashboard.TileHandler;
-import com.kerio.dashboard.api.ApiClient;
-import com.kerio.dashboard.api.NotificationGetter.Notification;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Message;
@@ -19,6 +13,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.kerio.dashboard.NotificationUpdater;
+import com.kerio.dashboard.R;
+import com.kerio.dashboard.TileHandler;
+import com.kerio.dashboard.api.ApiClient;
+import com.kerio.dashboard.api.NotificationGetter.Notification;
 
 public class NotificationTile extends Tile {
 	

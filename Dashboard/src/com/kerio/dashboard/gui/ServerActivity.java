@@ -8,27 +8,11 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import com.kerio.dashboard.ApiUtils;
-import com.kerio.dashboard.R;
-import com.kerio.dashboard.ServerDashboardUpdater;
-import com.kerio.dashboard.api.ApiClient;
-import com.kerio.dashboard.api.TrustStoreHelper;
-import com.kerio.dashboard.api.ApiClient.ApiClientException;
-import com.kerio.dashboard.config.ServerConfig;
-import com.kerio.dashboard.config.gui.CertificateStoreActivity;
-import com.kerio.dashboard.config.gui.SettingActivity;
-import com.kerio.dashboard.gui.tiles.NotificationTile;
-import com.kerio.dashboard.gui.tiles.Tile;
-import com.kerio.dashboard.gui.tiles.TileFactory;
-
-import android.os.Build;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Intent;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -36,6 +20,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.kerio.dashboard.ApiUtils;
+import com.kerio.dashboard.R;
+import com.kerio.dashboard.ServerDashboardUpdater;
+import com.kerio.dashboard.api.ApiClient;
+import com.kerio.dashboard.api.ApiClient.ApiClientException;
+import com.kerio.dashboard.api.TrustStoreHelper;
+import com.kerio.dashboard.config.ServerConfig;
+import com.kerio.dashboard.config.gui.CertificateStoreActivity;
+import com.kerio.dashboard.config.gui.SettingActivity;
+import com.kerio.dashboard.gui.tiles.NotificationTile;
+import com.kerio.dashboard.gui.tiles.Tile;
+import com.kerio.dashboard.gui.tiles.TileFactory;
 
 public class ServerActivity extends Activity {
 
@@ -236,7 +233,6 @@ public class ServerActivity extends Activity {
 		super.onDestroy();
 	}
 	
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)//TODO COMPATIBILITY
 	private void setUpActionBar() {
 		ApiUtils.setUpActionBar(getActionBar());
 	}

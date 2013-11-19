@@ -1,13 +1,13 @@
 package com.kerio.dashboard.gui.tiles;
 
-import com.kerio.dashboard.api.ApiClient;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+
+import com.kerio.dashboard.api.ApiClient;
 
 public abstract class Tile extends LinearLayout{
 

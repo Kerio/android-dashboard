@@ -2,15 +2,6 @@ package com.kerio.dashboard.gui.tiles;
 
 import java.security.cert.X509Certificate;
 
-import com.kerio.dashboard.R;
-import com.kerio.dashboard.ServerStatusUpdater;
-import com.kerio.dashboard.ServerStatusUpdater.ConnectionState;
-import com.kerio.dashboard.ServerStatusUpdater.ServerStatus;
-import com.kerio.dashboard.api.ApiClient;
-import com.kerio.dashboard.api.NotificationGetter.Notification;
-import com.kerio.dashboard.api.NotificationGetter.NotificationType;
-import com.kerio.dashboard.config.ServerConfig;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
@@ -25,6 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.kerio.dashboard.R;
+import com.kerio.dashboard.ServerStatusUpdater;
+import com.kerio.dashboard.ServerStatusUpdater.ServerStatus;
+import com.kerio.dashboard.api.ApiClient;
+import com.kerio.dashboard.api.NotificationGetter.Notification;
+import com.kerio.dashboard.api.NotificationGetter.NotificationType;
+import com.kerio.dashboard.config.ServerConfig;
 
 public class ServerTile extends Tile {
 	public static enum State {
@@ -48,7 +47,7 @@ public class ServerTile extends Tile {
 	private ServerConfig.ServerType type = ServerConfig.ServerType.CONTROL;
 	
 	public ServerTile(Context context, ServerConfig server) {
-		super(context, (ApiClient)null); // TODO: remove ApiClient
+		super(context, (ApiClient)null);
 
 		initializeStructure();
 		this.setConfig(server);
@@ -270,8 +269,7 @@ public class ServerTile extends Tile {
 		return true;
 	}
 	
-	
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings("deprecation")// Because of background drawable. If-statement makes it forward compatible
 	public void touchFeedback() {
 		final AnimationDrawable drawable = new AnimationDrawable();
 		final Handler handler = new Handler();
@@ -307,7 +305,7 @@ public class ServerTile extends Tile {
 		}, 100);
 	}
 	
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)//TODO COMPATIBILITY
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	private void setBackgroudNew(AnimationDrawable drawable){
 		this.frame.setBackground(drawable);
 	}

@@ -2,11 +2,11 @@ package com.kerio.dashboard;
 
 import java.util.HashMap;
 
+import android.os.Handler;
+
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.api.NotificationGetter;
 import com.kerio.dashboard.api.NotificationGetter.Notification;
-
-import android.os.Handler;
 
 public class NotificationUpdater extends PeriodicTask {
 

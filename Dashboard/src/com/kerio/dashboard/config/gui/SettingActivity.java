@@ -4,22 +4,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.kerio.dashboard.ApiUtils;
-import com.kerio.dashboard.R;
-import com.kerio.dashboard.config.Config;
-import com.kerio.dashboard.config.ServerConfig;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+
+import com.kerio.dashboard.ApiUtils;
+import com.kerio.dashboard.R;
+import com.kerio.dashboard.config.Config;
+import com.kerio.dashboard.config.ServerConfig;
 
 public class SettingActivity extends PreferenceActivity implements OnPreferenceChangeListener {
 	
@@ -28,7 +27,6 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 	private PreferenceCategory firewallsCategoryComponent;
 	private Config configAll;
 	
-	@SuppressWarnings("deprecation") //for android 2.3
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,9 +126,10 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 		return false;
 	}
 	
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setUpActionBar() {
-		ApiUtils.setUpActionBar(getActionBar());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			 ApiUtils.setUpActionBar(getActionBar());
+		}
 	}
 	
 	@Override

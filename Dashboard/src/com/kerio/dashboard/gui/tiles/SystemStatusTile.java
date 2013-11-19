@@ -1,12 +1,13 @@
 package com.kerio.dashboard.gui.tiles;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+
 import com.kerio.dashboard.SystemStatusUpdater;
 import com.kerio.dashboard.SystemStatusUpdater.SystemStatus;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
-import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 
 public class SystemStatusTile extends TextTile {
 

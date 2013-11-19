@@ -2,9 +2,9 @@ package com.kerio.dashboard;
 
 import org.json.JSONObject;
 
-import com.kerio.dashboard.api.ApiClient;
-
 import android.os.Handler;
+
+import com.kerio.dashboard.api.ApiClient;
 
 public abstract class TileUpdater extends PeriodicTask {
 

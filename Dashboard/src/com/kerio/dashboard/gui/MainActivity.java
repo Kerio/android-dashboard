@@ -8,14 +8,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -161,7 +157,6 @@ public class MainActivity extends Activity {
     	startActivity(myIntent);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB) //TODO CIMA propagate this condition higher
 	private void showCertWarning(ServerTile tile, X509Certificate certChain[], Handler handler) {
     	CertificateWarningDialog dialog = new CertificateWarningDialog();
     	dialog.setCertChain(certChain);

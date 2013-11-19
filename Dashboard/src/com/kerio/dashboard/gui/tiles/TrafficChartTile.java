@@ -1,18 +1,21 @@
 package com.kerio.dashboard.gui.tiles;
 
 import java.security.InvalidParameterException;
+
 import org.json.JSONArray;
-import com.jjoe64.graphview.GraphViewSeries;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Message;
+import android.widget.LinearLayout;
+
 import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.TrafficChartUpdater;
 import com.kerio.dashboard.TrafficChartUpdater.ChartData;
 import com.kerio.dashboard.api.ApiClient;
-import android.content.Context;
-import android.graphics.Color;
-import android.os.Message;
-import android.widget.LinearLayout;
 
 public class TrafficChartTile extends Tile {
 	

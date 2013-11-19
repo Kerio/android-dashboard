@@ -2,12 +2,13 @@ package com.kerio.dashboard.gui.tiles;
 
 import java.security.InvalidParameterException;
 
+import android.content.Context;
+import android.os.Message;
+
 import com.kerio.dashboard.SystemUpdater;
 import com.kerio.dashboard.SystemUpdater.SystemInfo;
 import com.kerio.dashboard.TileHandler;
 import com.kerio.dashboard.api.ApiClient;
-import android.content.Context;
-import android.os.Message;
 
 public class SystemTile extends TextTile {
 

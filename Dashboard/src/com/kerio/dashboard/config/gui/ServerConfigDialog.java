@@ -1,19 +1,19 @@
 package com.kerio.dashboard.config.gui;
 
-import com.kerio.dashboard.R;
-import com.kerio.dashboard.config.ServerConfig;
-import com.kerio.dashboard.config.ServerConfig.ServerType;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import com.kerio.dashboard.R;
+import com.kerio.dashboard.config.ServerConfig;
+import com.kerio.dashboard.config.ServerConfig.ServerType;
 
 
 public class ServerConfigDialog extends DialogPreference implements OnClickListener {

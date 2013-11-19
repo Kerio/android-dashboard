@@ -4,8 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.kerio.dashboard.api.ApiClient;
 import android.os.Handler;
+
+import com.kerio.dashboard.api.ApiClient;
 
 public class TrafficChartUpdater extends TileUpdater {
 

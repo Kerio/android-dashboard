@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Handler;
+
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.config.ServerConfig;
 
@@ -72,22 +73,20 @@ public class ServerDashboardUpdater extends PeriodicTask {
 				}
 			}
 			if(emptyDashboard){
-				//If the Dashboard is empty, add Default tiles
-				tiles.put("tileSystemHealth", null);
-				tiles.put("tileSystem", null);
-				tiles.put("tileSystemStatus", null);
+				addDefaultTiles(tiles);
 			}
 
 		} catch (JSONException e) {
-			// TODO add default tiles
-			tiles.put("tileSystemHealth", null);
-			tiles.put("tileSystem", null);
-			tiles.put("tileSystemStatus", null);
-			tiles.put("tileSystemHealth", null);
-			tiles.put("tileSystemHealth", null);
+			addDefaultTiles(tiles);
 		}
 		
 		notify("UpdateDone");
 		notify(tiles);
+	}
+	
+	private void addDefaultTiles(Map<String, Object> tiles){
+		tiles.put("tileSystemHealth", null);
+		tiles.put("tileSystem", null);
+		tiles.put("tileSystemStatus", null);
 	}
 }

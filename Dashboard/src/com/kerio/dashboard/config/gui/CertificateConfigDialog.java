@@ -2,8 +2,6 @@ package com.kerio.dashboard.config.gui;
 
 import java.security.KeyStoreException;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
 
@@ -37,7 +35,6 @@ public class CertificateConfigDialog extends CertificateDialog {
 		}
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)//TODO COMPATIBILITY
 	@Override
 	protected void trustCertificate() {
 		this.getDialog().cancel();

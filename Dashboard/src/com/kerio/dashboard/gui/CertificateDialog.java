@@ -2,25 +2,21 @@ package com.kerio.dashboard.gui;
 
 import java.security.cert.X509Certificate;
 
-import com.kerio.dashboard.R;
-import com.kerio.dashboard.ServerStatusUpdater.ServerStatus;
-import com.kerio.dashboard.api.TrustStoreHelper;
-import com.kerio.dashboard.gui.tiles.CertificateTile;
-
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+import com.kerio.dashboard.R;
+import com.kerio.dashboard.api.TrustStoreHelper;
+import com.kerio.dashboard.gui.tiles.CertificateTile;
+
 public abstract class CertificateDialog extends DialogFragment {
 	protected X509Certificate[] certChain = null;
 	protected TrustStoreHelper trustHelper = null;
@@ -39,7 +35,6 @@ public abstract class CertificateDialog extends DialogFragment {
 	    builder.setTitle(this.getTitleId());
 	    builder.setMessage(this.getMessageId());
 	    
-	    //TODO MHAJEK style the text better
 	    TextView issuer = new TextView(root.getContext());
 	    issuer.setText(R.string.cert_issuer);
 	    issuer.setTextSize(16);

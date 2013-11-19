@@ -3,9 +3,9 @@ package com.kerio.dashboard.gui.tiles;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.kerio.dashboard.api.ApiClient;
-
 import android.content.Context;
+
+import com.kerio.dashboard.api.ApiClient;
 
 public class TileFactory {
 

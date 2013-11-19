@@ -5,9 +5,8 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
+import java.util.Map;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -18,6 +17,7 @@ import android.util.Log;
 
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.api.TrustStoreHelper;
+import com.kerio.dashboard.gui.tiles.CertificateTile;
 
 public class CertificateStoreActivity extends PreferenceActivity implements	OnPreferenceChangeListener, OnPreferenceClickListener {
 
@@ -48,6 +48,8 @@ public class CertificateStoreActivity extends PreferenceActivity implements	OnPr
 		
 		this.certificatesCategoryComponent.removeAll();
 		
+		
+		
 		while(aliases.hasMoreElements()){
 			try{
 				String alias = aliases.nextElement();
@@ -58,8 +60,23 @@ public class CertificateStoreActivity extends PreferenceActivity implements	OnPr
 					pref.certificate = (X509Certificate)cert;
 					pref.certificateAlias = alias;
 					
-					pref.setTitle(pref.certificate.getSubjectDN().getName()); //TODO MHAJEK finish texts
-					pref.setSummary("issued by:" + pref.certificate.getIssuerDN().toString()); //TODO MHAJEK finish texts
+		
+					String dn = pref.certificate.getSubjectDN().getName();
+					Map<String, String> items = CertificateTile.parseDn(dn);				
+					if( ! items.isEmpty() && items.containsKey("CN")){
+						pref.setTitle(items.get("CN"));
+					}else{
+						pref.setTitle(dn);
+					}
+					
+					String issuerDn = pref.certificate.getSubjectDN().getName();
+					Map<String, String> issuerItems = CertificateTile.parseDn(issuerDn);				
+					if( ! issuerItems.isEmpty() && issuerItems.containsKey("CN")){
+						pref.setSummary("issued by:" + issuerItems.get("CN"));
+					}else{
+						pref.setSummary("issued by:" + issuerDn);
+					}
+					
 					
 					pref.setOnPreferenceClickListener(this);
 					pref.setOnPreferenceChangeListener(this);
@@ -80,7 +97,6 @@ public class CertificateStoreActivity extends PreferenceActivity implements	OnPr
 		return false;
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)//TODO COMPATIBILITY
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 		if(preference instanceof CertificatePreference){

@@ -1,9 +1,9 @@
 package com.kerio.dashboard;
 
-import com.kerio.dashboard.gui.tiles.Tile;
-
 import android.os.Handler;
 import android.os.Message;
+
+import com.kerio.dashboard.gui.tiles.Tile;
 
 public abstract class TileHandler extends Handler {
 	private Tile tile;
