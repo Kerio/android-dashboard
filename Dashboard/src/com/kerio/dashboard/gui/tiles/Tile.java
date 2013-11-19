@@ -9,7 +9,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
-public abstract class Tile extends LinearLayout {
+public abstract class Tile extends LinearLayout{
 
 	protected ApiClient client;
 	private boolean ready = false;

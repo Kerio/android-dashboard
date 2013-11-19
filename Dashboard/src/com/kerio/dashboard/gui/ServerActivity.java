@@ -13,6 +13,7 @@ import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerDashboardUpdater;
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.api.TrustStoreHelper;
+import com.kerio.dashboard.api.ApiClient.ApiClientException;
 import com.kerio.dashboard.config.ServerConfig;
 import com.kerio.dashboard.config.gui.CertificateStoreActivity;
 import com.kerio.dashboard.config.gui.SettingActivity;
@@ -192,11 +193,24 @@ public class ServerActivity extends Activity {
     	this.dashboard.setVisibility(View.GONE);
         this.loading = (LinearLayout)findViewById(R.id.loading);
         
+		if (0 != config.description.length()) {
+			setTitle(config.description);
+		}
+		else {
+			setTitle(config.server);
+		}
+        
         if(this.trustHelper == null){
         	this.trustHelper = new TrustStoreHelper(this);
         }
         
-        ApiClient apiClient = new ApiClient(config.server, config, this.trustHelper.getKeystore());
+        ApiClient apiClient = null;
+        try{
+        	apiClient = new ApiClient(config, this.trustHelper.getKeystore());
+        }catch(ApiClientException ace){
+        	loadingSetText(getString(R.string.connectingError));
+        	return;
+        }
 
         // Notifications tile should be present always
         this.notifications = new NotificationTile(this, apiClient);
@@ -212,12 +226,6 @@ public class ServerActivity extends Activity {
 		this.dashboardUpdater.activate();
        
 		loadingSetText(getString(R.string.connectingText));
-		if (0 != config.description.length()) {
-			setTitle(config.description);
-		}
-		else {
-			setTitle(config.server);
-		}
 		
 		setUpActionBar();
 	}
@@ -228,7 +236,7 @@ public class ServerActivity extends Activity {
 		super.onDestroy();
 	}
 	
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)//TODO COMPATIBILITY
 	private void setUpActionBar() {
 		ApiUtils.setUpActionBar(getActionBar());
 	}

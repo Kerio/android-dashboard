@@ -1,20 +1,16 @@
 package com.kerio.dashboard.gui;
 import java.security.KeyStoreException;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Build;
+import android.util.Log;
 
 import com.kerio.dashboard.R;
-import com.kerio.dashboard.ServerStatusUpdater.ServerStatus;
+import com.kerio.dashboard.gui.tiles.ServerTile;
 
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class CertificateWarningDialog extends CertificateDialog {
 
-	private ServerStatus serverStatus = null;
+	//TODO this is definitely spaghetti. Use observer or listener or somethinke like that.
+	private ServerTile serverTile = null;
 	
 	protected void rejectCertificate() {
 		this.getDialog().cancel();
@@ -25,13 +21,12 @@ public class CertificateWarningDialog extends CertificateDialog {
     		try {
 				this.trustHelper.getKeystore().setCertificateEntry("Trust-" + this.certChain[0].hashCode(), this.certChain[0]);
 			} catch (KeyStoreException e1) {
+				Log.d("CertificateWarningDialog", "It wasn't possible to add certificate to the store.", e1);
 				return;
-				// TODO CIMA log at least
 			}
     		
-    		if(this.serverStatus != null){
-    			Thread updateThread = new Thread(this.serverStatus);
-    			updateThread.start();
+    		if(this.serverTile != null){
+    			this.serverTile.reload();
     		}
 		}
 	}
@@ -44,7 +39,7 @@ public class CertificateWarningDialog extends CertificateDialog {
 		return R.string.cert_Warning_body;
 	}
 	
-	public void setServerStatus(ServerStatus status){
-		this.serverStatus = status;
+	public void setServerTile(ServerTile tile){
+		this.serverTile = tile;
 	}
 }

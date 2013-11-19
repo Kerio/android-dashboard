@@ -127,7 +127,8 @@ public class MainActivity extends Activity {
         		if (meTile.tileStatus == ServerTile.State.Ok){	
         			me.showDashboard(server);
         		}else if(meTile.tileStatus == State.CertWarning){
-        			me.showCertWarning(server, meTile.getHandler());
+        	    	meTile.setServerStatus(MainActivity.this.serverStatusUpdater.new ServerStatus(server, meTile.getHandler(), MainActivity.this.trustHelper.getKeystore()));
+        			me.showCertWarning(meTile, server.getCertChain(), meTile.getHandler());
         		}
         	}
         };
@@ -161,13 +162,11 @@ public class MainActivity extends Activity {
     }
     
     @TargetApi(Build.VERSION_CODES.HONEYCOMB) //TODO CIMA propagate this condition higher
-	private void showCertWarning(ServerConfig server, Handler handler) {
-    	X509Certificate certChain[] = server.getCertChain();
+	private void showCertWarning(ServerTile tile, X509Certificate certChain[], Handler handler) {
     	CertificateWarningDialog dialog = new CertificateWarningDialog();
     	dialog.setCertChain(certChain);
-    	dialog.setServerStatus(this.serverStatusUpdater.new ServerStatus(server, handler, this.trustHelper.getKeystore()));
+    	dialog.setServerTile(tile);
     	dialog.setTrustHelper(this.trustHelper);
-    	
     	dialog.show(getFragmentManager(), "CertificateWarningDialog");
     }
 

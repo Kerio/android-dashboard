@@ -6,19 +6,18 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
-import com.kerio.dashboard.R;
-import com.kerio.dashboard.api.TrustStoreHelper;
-
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.DialogPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceCategory;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
+import android.util.Log;
+
+import com.kerio.dashboard.R;
+import com.kerio.dashboard.api.TrustStoreHelper;
 
 public class CertificateStoreActivity extends PreferenceActivity implements	OnPreferenceChangeListener, OnPreferenceClickListener {
 
@@ -43,7 +42,7 @@ public class CertificateStoreActivity extends PreferenceActivity implements	OnPr
 		try{	
 			aliases = store.aliases();
 		}catch(KeyStoreException kse){
-			//TODO CIMA log at least
+			Log.d("CertificateStoreActivity", "Loading certificate IDs from store failed", kse);
 			return;
 		}
 		
@@ -68,7 +67,7 @@ public class CertificateStoreActivity extends PreferenceActivity implements	OnPr
 					this.certificatesCategoryComponent.addPreference(pref);
 				}
 			}catch(KeyStoreException kse){
-				//TODO CIMA log at least
+				Log.d("CertificateStoreActivity", "Obtaining certificate for given alias failed", kse);
 			}
 		}
 	}
@@ -81,7 +80,7 @@ public class CertificateStoreActivity extends PreferenceActivity implements	OnPr
 		return false;
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)//TODO COMPATIBILITY
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 		if(preference instanceof CertificatePreference){

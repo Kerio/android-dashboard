@@ -5,6 +5,7 @@ import java.security.KeyStoreException;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.util.Log;
 
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.gui.CertificateDialog;
@@ -31,12 +32,12 @@ public class CertificateConfigDialog extends CertificateDialog {
 				listener.onPreferenceChange(pref, null);
 				
 			} catch (KeyStoreException e1) {
-				// TODO CIMA log at least
+				Log.d("CertificateConfigDialog", "Removing certificate from store failed",e1);
 			}
 		}
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)//TODO COMPATIBILITY
 	@Override
 	protected void trustCertificate() {
 		this.getDialog().cancel();

@@ -5,6 +5,7 @@ import java.security.cert.X509Certificate;
 import com.kerio.dashboard.R;
 import com.kerio.dashboard.ServerStatusUpdater;
 import com.kerio.dashboard.ServerStatusUpdater.ConnectionState;
+import com.kerio.dashboard.ServerStatusUpdater.ServerStatus;
 import com.kerio.dashboard.api.ApiClient;
 import com.kerio.dashboard.api.NotificationGetter.Notification;
 import com.kerio.dashboard.api.NotificationGetter.NotificationType;
@@ -39,9 +40,11 @@ public class ServerTile extends Tile {
 	private LinearLayout frame;
 	private ImageView appIcon;
 	private LinearLayout border;
+	
 	public State tileStatus;
 	public X509Certificate certificate;
-	
+	private ServerStatus serverStatus;
+
 	private ServerConfig.ServerType type = ServerConfig.ServerType.CONTROL;
 	
 	public ServerTile(Context context, ServerConfig server) {
@@ -67,18 +70,26 @@ public class ServerTile extends Tile {
 		this.setConfig(status.getConfig());
 		
         switch(status.connected) {
-        case Error:
-        	displayNotes("Unable to connect to the server or authorization failed");
-			setState(State.Error);
-			return;
-			
-        case CertificateError:
-        	displayNotes("Server certificate is invalid or untrusted");
-			setState(State.CertWarning);
-			return;
-			
-        case Connected:
-        	setState(State.Ok);
+	        case Error:
+	        	displayNotes("Unable to connect to the server or authorization failed");
+				setState(State.Error);
+				return;
+				
+	        case CertificateError:
+	        	displayNotes("Server certificate is invalid or untrusted");
+				setState(State.CertWarning);
+				return;
+				
+	        case ConnectivityError:
+	        	displayNotes("Application error: " + status.getErrorCause().getMessage());
+	        	setState(State.Error);
+				break;
+	        	
+	        case Connected:
+	        	setState(State.Ok);
+				break;
+			default:
+				break;
         }
         
     	if ((status.notifications == null) || status.notifications.isEmpty()) {
@@ -99,7 +110,7 @@ public class ServerTile extends Tile {
 			}	
 		}
 	}
-	
+
 	@Override
 	public void update() {
 	}
@@ -110,7 +121,19 @@ public class ServerTile extends Tile {
 		this.notes.setVisibility(View.VISIBLE);
 	}
 	
-	private void setState(State state) {
+	public void reload() {
+		if(serverStatus != null){
+			Thread updateThread = new Thread(serverStatus);
+			updateThread.start();
+		}
+		setState(State.Unknown);
+	}
+	
+	public void setServerStatus(ServerStatus serverStatus) {
+		this.serverStatus = serverStatus;
+	}
+	
+	public void setState(State state) {
 		this.tileStatus = state;
 		switch (state) {
 		case Ok:
@@ -284,7 +307,7 @@ public class ServerTile extends Tile {
 		}, 100);
 	}
 	
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)//TODO COMPATIBILITY
 	private void setBackgroudNew(AnimationDrawable drawable){
 		this.frame.setBackground(drawable);
 	}

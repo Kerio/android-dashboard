@@ -16,7 +16,6 @@ public abstract class TextTile extends Tile {
 
 	public TextTile(Context context, ApiClient client) {
 		super(context, client);
-		// TODO Auto-generated constructor stub
 		this.initialize();
 	}
 	

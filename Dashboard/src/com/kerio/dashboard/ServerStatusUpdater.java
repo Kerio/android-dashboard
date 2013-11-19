@@ -1,22 +1,21 @@
 package com.kerio.dashboard;
 
 import java.security.KeyStore;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.SSLHandshakeException;
 
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Message;
+
 import com.kerio.dashboard.api.ApiClient;
+import com.kerio.dashboard.api.ApiClient.ApiClientException;
 import com.kerio.dashboard.api.NotificationGetter;
 import com.kerio.dashboard.api.NotificationGetter.Notification;
 import com.kerio.dashboard.config.Config;
 import com.kerio.dashboard.config.ServerConfig;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
 
 public class ServerStatusUpdater extends PeriodicTask {
 
@@ -45,7 +44,7 @@ public class ServerStatusUpdater extends PeriodicTask {
 	}
 	
 	public enum ConnectionState {
-		Connected, CertificateError, Error; 
+		Connected, CertificateError, ConnectivityError, Error; 
 	}
 	
 	// ServerStatus updates status of one server, and notifies handler about server's status
@@ -53,10 +52,12 @@ public class ServerStatusUpdater extends PeriodicTask {
 		
 		private Handler handler;
 		
-		private ServerConfig config;
 		public ConnectionState connected = ConnectionState.Error;
 		public Map<String, Notification> notifications = null;
+		
+		private ServerConfig config;
 		private KeyStore trustStore;
+		private Throwable errorCause;
 		
 		public ServerStatus(ServerConfig config, Handler handler, KeyStore trustStore) {
 			this.config = config;
@@ -66,15 +67,21 @@ public class ServerStatusUpdater extends PeriodicTask {
 		
 		@Override
 		public void run() {
-			ApiClient client = new ApiClient(this.config.server, this.config, this.trustStore);
+			ApiClient client = null;
+			
 			try{
-				this.connected = client.login(this.config.username, this.config.password) ? ConnectionState.Connected : ConnectionState.Error;
-			}catch(SSLHandshakeException se){
-				this.connected = ConnectionState.CertificateError;
-				if(se.getCause() instanceof CertificateException) {
-					//TODO CIMA
-				}
+				client = new ApiClient(this.config, this.trustStore);
+				try{
+					this.connected = client.login(this.config.username, this.config.password) ? ConnectionState.Connected : ConnectionState.Error;
+				}catch(SSLHandshakeException se){
+					this.connected = ConnectionState.CertificateError;
+					this.errorCause = se;
+				}	
+			}catch (ApiClientException ace) {
+				this.connected = ConnectionState.ConnectivityError;
+				this.errorCause = ace;
 			}
+			
 
 	 		if (this.connected == ConnectionState.Connected) {
 	 			NotificationGetter notificationGetter = new NotificationGetter(client);
@@ -88,6 +95,10 @@ public class ServerStatusUpdater extends PeriodicTask {
 		
 		public ServerConfig getConfig() {
 			return config;
+		}
+
+		public Throwable getErrorCause() {
+			return errorCause;
 		}
 	}
 	

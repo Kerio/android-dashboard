@@ -11,6 +11,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.LinkedHashMap;
+import java.util.concurrent.ThreadFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
@@ -49,6 +50,25 @@ import android.util.Log;
 
 public class ApiClient{
 	
+	public class ApiClientException extends Throwable {
+		private static final long serialVersionUID = -8038531525676458751L;
+		private Throwable cause;
+		private String message;
+
+		ApiClientException(String message, Throwable cause) {
+			this.cause = cause;
+			this.message = message;
+		}
+		
+		public Throwable getCause() {
+			return cause;
+		}
+		
+		public String getMessage(){
+			return this.message + this.cause != null ? ": " + this.cause.getMessage() : "";
+		}
+	}
+	
 	static LocalTrustManagement localTrustManagement = null;
 	
 	LinkedHashMap<String, JSONObject> response = null;
@@ -57,13 +77,22 @@ public class ApiClient{
 	private int port;
 	private String token;
 	private String error;
-	private HttpClient httpClient;
+	private HttpClient httpClient = null;
 	
-	public ApiClient(String server, ServerConfig serverConfig, KeyStore trustStore) {
-		this(server, serverConfig, trustStore, 0);
+	public ApiClient(ServerConfig serverConfig, KeyStore trustStore) throws ApiClientException {
+		this(serverConfig, trustStore, 0);
 	}
 	
-	public ApiClient(String server, ServerConfig serverConfig, KeyStore trustStore, int port) {
+	public ApiClient(ServerConfig serverConfig, KeyStore trustStore, int port) throws ApiClientException {
+		
+		if(serverConfig ==  null){
+			throw new ApiClientException("Provided serverConfig is invalid (null)", new NullPointerException());
+		}
+		
+		if(trustStore ==  null){
+			throw new ApiClientException("Provided trustStore is invalid (null)", new NullPointerException());
+		}
+		
 		this.config = serverConfig;
 		this.port = port;
 		
@@ -79,7 +108,31 @@ public class ApiClient{
 	    schReg.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
 	    ClientConnectionManager conMgr = new ThreadSafeClientConnManager(params, schReg);
 
-	    httpClient = getSslClient(new DefaultHttpClient(conMgr, params), serverConfig, trustStore);
+	    try{
+	    	httpClient = getSslClient(new DefaultHttpClient(conMgr, params), serverConfig, trustStore);
+	    }catch(KeyManagementException kme){
+	    	//depends only on trust management -> should never happen
+	    	throw new ApiClientException("Problem with key management during SSL context initialization", kme);
+	    }catch(UnrecoverableKeyException uke){
+	    	throw new ApiClientException("Initialization of SSLSocketFactory failed", uke);
+	    }catch(NoSuchAlgorithmException nsae){
+	    	//Should never happen because we do use default algorithm
+	    	throw new ApiClientException("Unsupported algorithm was chosen for instantiation of trust management factory", nsae);
+	    }catch(KeyStoreException kse){
+	    	throw new ApiClientException("Provided trust store is either missing or invalid", kse);
+	    }
+	}
+	
+	private HttpClient getSslClient(HttpClient client, ServerConfig serverConfig, KeyStore trustStore) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException{
+        SSLSocketFactory ssf =  new TrustSSLSocketFactory(trustStore, serverConfig);
+        ssf.setHostnameVerifier(new BrowserCompatHostnameVerifier()); //TODO Not effective
+        
+        ClientConnectionManager ccm = client.getConnectionManager();
+
+        SchemeRegistry sr = ccm.getSchemeRegistry();
+        sr.register(new Scheme("https", (SocketFactory) ssf, 4081));
+
+        return new DefaultHttpClient(ccm, client.getParams());
 	}
 	
 	public boolean login(String username, String password) throws SSLHandshakeException {
@@ -247,25 +300,5 @@ public class ApiClient{
 			result += line;
 		
 		return new JSONObject(result);
-	}
-
-	
-	private HttpClient getSslClient(HttpClient client, ServerConfig serverConfig, KeyStore trustStore){
-	    try {
-	        
-	        SSLSocketFactory ssf =  new TrustSSLSocketFactory(trustStore, serverConfig);
-	        ssf.setHostnameVerifier(new BrowserCompatHostnameVerifier()); //TODO CIMA
-	        
-	        ClientConnectionManager ccm = client.getConnectionManager();
-	        
-
-	        SchemeRegistry sr = ccm.getSchemeRegistry();
-	        sr.register(new Scheme("https", (SocketFactory) ssf, 4081));
-
-	        
-	        return new DefaultHttpClient(ccm, client.getParams());
-	    } catch (Exception ex) {
-	        return null;//TODO CIMA
-	    }
 	}
 }

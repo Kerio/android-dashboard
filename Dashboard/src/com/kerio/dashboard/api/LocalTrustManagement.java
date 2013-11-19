@@ -1,7 +1,5 @@
 package com.kerio.dashboard.api;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -12,64 +10,42 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import com.kerio.dashboard.R;
 import com.kerio.dashboard.config.ServerConfig;
-
-import android.content.Context;
-import android.util.Log;
 
 public class LocalTrustManagement implements X509TrustManager {
 
-	private TrustManagerFactory tmf = null;
-	private TrustManagerFactory localTmf = null;
 	private X509TrustManager origTrustManager = null;
 	private X509TrustManager localTrustManager = null;
 	private ServerConfig serverConfig = null;
-	private KeyStore localKeyStore = null;
 	
 
-	public LocalTrustManagement(ServerConfig serverConfig, KeyStore localKeyStore) {
+	public LocalTrustManagement(ServerConfig serverConfig, KeyStore localKeyStore) throws NoSuchAlgorithmException, KeyStoreException {
 		this.serverConfig = serverConfig;
-		this.localKeyStore = localKeyStore;
-		initManagers();
+		
+		this.origTrustManager = initManagement(null);
+		this.localTrustManager = initManagement(localKeyStore);
 	}
 	
-	private void initManagers(){
-		try{
-			this.tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-			this.localTmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-			this.tmf.init((KeyStore)null);
-			this.localTmf.init(localKeyStore);
-			
-		}catch(NoSuchAlgorithmException nsae){
-			Log.d("LocalTrustManagement", "Algorithm for SSL trust managemetn not found", nsae);
-		}catch(KeyStoreException kse){
-			Log.d("LocalTrustManagement", "Unable to initialize trustmanegement factory.", kse);
-		}
-		
-		 
+	private static X509TrustManager initManagement(KeyStore keyStore) throws NoSuchAlgorithmException, KeyStoreException{
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+		tmf.init(keyStore);
+
 		TrustManager[] trustManagers = tmf.getTrustManagers();
 		for (TrustManager trustManager : trustManagers) {
 			if(trustManager instanceof X509TrustManager){
-				this.origTrustManager = (X509TrustManager)trustManager;
-				break;
+				return (X509TrustManager)trustManager;
 			}
 		}
-		
-		//TODO CIMA duplicita
-		trustManagers = this.localTmf.getTrustManagers();
-		for (TrustManager trustManager : trustManagers) {
-			if(trustManager instanceof X509TrustManager){
-				this.localTrustManager = (X509TrustManager)trustManager;
-				break;
-			}
-		}
+		return null;
 	}
-	
-	
+		
 	@Override
 	public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-		this.origTrustManager.checkClientTrusted(chain, authType);
+		if(this.origTrustManager != null){
+			this.origTrustManager.checkClientTrusted(chain, authType);
+		}else{
+			throw new CertificateException("System default trust manager not initialized", new NullPointerException());
+		}
 	}
 
 	@Override
@@ -77,11 +53,19 @@ public class LocalTrustManagement implements X509TrustManager {
 		if(this.serverConfig != null){
 			this.serverConfig.setCertChain(chain);
 		}
+		
 		try{
-			this.origTrustManager.checkServerTrusted(chain, authType);
+			if(this.origTrustManager != null){
+				this.origTrustManager.checkServerTrusted(chain, authType);
+			}else{
+				throw new CertificateException("System default trust manager not initialized", new NullPointerException());
+			}
 		}catch(CertificateException ce){
-			initManagers();//TODO just for a test
-			this.localTrustManager.checkServerTrusted(chain, authType);
+			if(this.localTrustManager != null){
+				this.localTrustManager.checkServerTrusted(chain, authType);
+			}else{
+				throw ce;
+			}
 		}
 	}
 
