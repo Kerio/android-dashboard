@@ -11,11 +11,14 @@ With Kerio Dashboard you can monitor:
 - System Status
 - Connectivity
 - VPN Info
-- License Info
-- 
+\- License Info
+ 
 Notifications are also displayed.
 
 Sources available on github: https://github.com/Kerio/android-dashboard
 
+Unsigned appliaction can be downloaded from our github: [KerioDashboard.apk (340 kB)](https://github.com/Kerio/android-dashboard/blob/master/KerioDashboard.apk?raw=true).
 
-Note: Kerio Dashboard is designed to be used with Kerio Control 8.1.0 and newer.
+Kerio Dashboard is designed to be used with Kerio Control 8.1.0 and newer.
+
+See more about Kerio products at [kerio.com](http://www.kerio.com/)
