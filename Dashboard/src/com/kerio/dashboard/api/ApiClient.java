@@ -133,9 +133,9 @@ public class ApiClient{
 		JSONObject params = new JSONObject();
 		JSONObject app = new JSONObject();
 		try {
-			app.put("name", "Dashboard for android");
+			app.put("name", "Dashboard for Android");
 			app.put("vendor", "Kerio");
-			app.put("version", "0.1");
+			app.put("version", "0.9");
 			params.put("userName", username);
 			params.put("password", password);
 			params.put("application", app);
